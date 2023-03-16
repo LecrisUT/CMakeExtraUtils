@@ -146,22 +146,22 @@ function(dynamic_version)
 				COMMAND ${CMAKE_COMMAND} -E true)
 	else ()
 		# Otherwise create the targets outputting to the appropriate files
-		add_custom_target(${ARGS_PROJECT_PREFIX}Version ALL
+		add_custom_target(${ARGS_PROJECT_PREFIX}DynamicVersion ALL
+				BYPRODUCTS ${ARGS_TMP_FOLDER}/.DynamicVersion.json ${ARGS_TMP_FOLDER}/.git_describe ${ARGS_TMP_FOLDER}/.version
 				COMMAND ${CMAKE_COMMAND}
 				-DDynamicVersion_RUN:BOOL=True
 				# Note: For some reason DynamicVersion_ARGS needs "" here, but it doesn't in execute_process
 				-DDynamicVersion_ARGS:STRING="${DynamicVersion_ARGS}"
 				-P ${CMAKE_CURRENT_FUNCTION_LIST_FILE}
 				COMMAND ${CMAKE_COMMAND} -E copy_if_different ${ARGS_TMP_FOLDER}/.DynamicVersion.json ${ARGS_OUTPUT_FOLDER}/.DynamicVersion.json
+				)
+		add_custom_target(${ARGS_PROJECT_PREFIX}Version ALL
+				DEPENDS ${ARGS_PROJECT_PREFIX}DynamicVersion
 				COMMAND ${CMAKE_COMMAND} -E copy_if_different ${ARGS_TMP_FOLDER}/.git_describe ${ARGS_OUTPUT_FOLDER}/.git_describe
 				COMMAND ${CMAKE_COMMAND} -E copy_if_different ${ARGS_TMP_FOLDER}/.version ${ARGS_OUTPUT_FOLDER}/.version
 				)
 		add_custom_target(${ARGS_PROJECT_PREFIX}GitHash
-				COMMAND ${CMAKE_COMMAND}
-				-DDynamicVersion_RUN:BOOL=True
-				-DDynamicVersion_ARGS:STRING="${DynamicVersion_ARGS}"
-				-P ${CMAKE_CURRENT_FUNCTION_LIST_FILE}
-				COMMAND ${CMAKE_COMMAND} -E copy_if_different ${ARGS_TMP_FOLDER}/.DynamicVersion.json ${ARGS_OUTPUT_FOLDER}/.DynamicVersion.json
+				DEPENDS ${ARGS_PROJECT_PREFIX}DynamicVersion
 				COMMAND ${CMAKE_COMMAND} -E copy_if_different ${ARGS_TMP_FOLDER}/.git_commit ${ARGS_OUTPUT_FOLDER}/.git_commit
 				)
 	endif ()
