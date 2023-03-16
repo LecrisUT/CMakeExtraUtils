@@ -2,7 +2,7 @@
 
 Extra utilities for cmake:
 
-- [`DynamicVersion`](cmake/DynamicVersion.cmake)
+- [`DynamicVersion`](cmake/DynamicVersion.md)
 
 ## Installation
 
