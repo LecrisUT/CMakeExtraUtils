@@ -13,7 +13,7 @@ cmake_minimum_required(VERSION 3.25)
 find_package(CmakeExtraUtils REQUIRED)
 
 include(DynamicVersion)
-get_dynamic_version()
+dynamic_version()
 
 project(MyProject
         VERSION ${PROJECT_VERSION})
@@ -26,4 +26,4 @@ project(MyProject
     - [ ] Test
     - [ ] Release
 - [ ] Add simple pre-commit and `pyproject.toml` environment
-- [ ] Fix `DynamicVersion` to work with buildable projects
+- [x] Fix `DynamicVersion` to work with buildable projects

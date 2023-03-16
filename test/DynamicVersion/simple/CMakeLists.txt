@@ -5,7 +5,9 @@ cmake_minimum_required(VERSION 3.25)
 find_package(CmakeExtraUtils REQUIRED)
 
 include(DynamicVersion)
-get_dynamic_version()
+dynamic_version()
 
 project(Test_DynamicVersion_Simple
 		VERSION ${PROJECT_VERSION})
+
+message("Version: ${Test_DynamicVersion_Simple_VERSION}")

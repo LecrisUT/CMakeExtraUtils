@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.25)
 list(PREPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake)
 
 include(DynamicVersion)
-get_dynamic_version()
+dynamic_version(PROJECT_PREFIX CmakeExtraUtils_)
 
 project(CmakeExtraUtils
 		VERSION ${PROJECT_VERSION})
