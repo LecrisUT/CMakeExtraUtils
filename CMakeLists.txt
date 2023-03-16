@@ -1,4 +1,9 @@
-cmake_minimum_required(VERSION 3.25)
+cmake_minimum_required(VERSION 3.16)
+
+# TODO: Remove when cmake 3.25 is commonly distributed
+if(POLICY CMP0140)
+	cmake_policy(SET CMP0140 NEW)
+endif()
 
 list(PREPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake)
 

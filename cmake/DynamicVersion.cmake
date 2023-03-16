@@ -120,6 +120,7 @@ function(dynamic_version)
 	# Execute get_dynamic_version once to know the current configuration
 	execute_process(COMMAND ${CMAKE_COMMAND}
 			-DDynamicVersion_RUN:BOOL=True
+			# Note: DynamicVersion_ARGS cannot be escaped with ""
 			-DDynamicVersion_ARGS:STRING=${DynamicVersion_ARGS}
 			-P ${CMAKE_CURRENT_FUNCTION_LIST_FILE}
 			COMMAND_ERROR_IS_FATAL ANY)
@@ -140,9 +141,9 @@ function(dynamic_version)
 	if (failed)
 		# If configuration failed, create dummy targets
 		add_custom_target(${ARGS_PROJECT_PREFIX}Version
-				COMMAND ${CMAKE_COMMAND} -E echo)
+				COMMAND ${CMAKE_COMMAND} -E true)
 		add_custom_target(${ARGS_PROJECT_PREFIX}GitHash
-				COMMAND ${CMAKE_COMMAND} -E echo)
+				COMMAND ${CMAKE_COMMAND} -E true)
 	else ()
 		# Otherwise create the targets outputting to the appropriate files
 		add_custom_target(${ARGS_PROJECT_PREFIX}Version ALL
@@ -171,10 +172,18 @@ function(dynamic_version)
 
 	message(VERBOSE
 			"DynamicVersion: Calculated version = ${${ARGS_OUTPUT_VERSION}}")
-	return(PROPAGATE
-			${ARGS_OUTPUT_DESCRIBE}
-			${ARGS_OUTPUT_VERSION}
-			${ARGS_OUTPUT_COMMIT})
+
+	if (CMAKE_VERSION VERSION_LESS 3.25)
+		# TODO: Remove when cmake 3.25 is commonly distributed
+		set(${ARGS_OUTPUT_DESCRIBE} ${${ARGS_OUTPUT_DESCRIBE}} PARENT_SCOPE)
+		set(${ARGS_OUTPUT_VERSION} ${${ARGS_OUTPUT_VERSION}} PARENT_SCOPE)
+		set(${ARGS_OUTPUT_COMMIT} ${${ARGS_OUTPUT_COMMIT}} PARENT_SCOPE)
+	else ()
+		return(PROPAGATE
+				${ARGS_OUTPUT_DESCRIBE}
+				${ARGS_OUTPUT_VERSION}
+				${ARGS_OUTPUT_COMMIT})
+	endif ()
 endfunction()
 
 function(get_dynamic_version)
