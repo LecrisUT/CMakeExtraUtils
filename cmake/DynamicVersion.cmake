@@ -12,9 +12,6 @@ function(get_dynamic_version)
 	#
 	# Options::
 	#   ALLOW_FAILS: Do not return with FATAL_ERROR. Developer is responsible for setting appropriate version if fails
-	#
-	# Note: this approach does not reconfigure the build.
-	# For CPM.cmake it is irrelevant because it does not have any builds
 
 	cmake_parse_arguments(ARGS
 			"ALLOW_FAILS"
@@ -63,8 +60,8 @@ function(get_dynamic_version)
 	if (describe-name MATCHES "^describe-name:[ ]?([v]?([0-9\\.]+).*)")
 		# First matched group is the full `git describe` of the latest tag
 		# Second matched group is only the version, i.e. `X.Y.Z`
-		set(${ARGS_OUTPUT_DESCRIBE} ${CMAKE_MATCH_1} PARENT_SCOPE)
-		set(${ARGS_OUTPUT_NAME} ${CMAKE_MATCH_2} PARENT_SCOPE)
+		set(${ARGS_OUTPUT_DESCRIBE} ${CMAKE_MATCH_1})
+		set(${ARGS_OUTPUT_NAME} ${CMAKE_MATCH_2})
 		message(DEBUG
 				"DynamicVersion: Found appropriate tag in .git_archival.txt file:\n"
 				"  Describe-name: ${${ARGS_OUTPUT_DESCRIBE}}\n"
@@ -75,7 +72,8 @@ function(get_dynamic_version)
 		# Test if
 		execute_process(COMMAND ${GIT_EXECUTABLE} status
 				WORKING_DIRECTORY ${ARGS_PROJECT_SOURCE}
-				RESULT_VARIABLE git_status_result)
+				RESULT_VARIABLE git_status_result
+				OUTPUT_QUIET)
 		if (NOT git_status_result EQUAL 0)
 			message(${error_message_type}
 					"DynamicVersion: Project source is neither a git repository nor a git archive:\n"
@@ -93,8 +91,8 @@ function(get_dynamic_version)
 					"  Describe-name: ${describe-name}")
 			return()
 		endif ()
-		set(${ARGS_OUTPUT_DESCRIBE} ${CMAKE_MATCH_1} PARENT_SCOPE)
-		set(${ARGS_OUTPUT_NAME} ${CMAKE_MATCH_2} PARENT_SCOPE)
+		set(${ARGS_OUTPUT_DESCRIBE} ${CMAKE_MATCH_1})
+		set(${ARGS_OUTPUT_NAME} ${CMAKE_MATCH_2})
 		message(DEBUG
 				"DynamicVersion: Found appropriate tag from git:\n"
 				"  Describe-name: ${${ARGS_OUTPUT_DESCRIBE}}\n"
@@ -102,4 +100,7 @@ function(get_dynamic_version)
 	endif ()
 	message(VERBOSE
 			"DynamicVersion: Calculated version = ${${ARGS_OUTPUT_NAME}}")
+	return(PROPAGATE
+			${ARGS_OUTPUT_DESCRIBE}
+			${ARGS_OUTPUT_NAME})
 endfunction()
