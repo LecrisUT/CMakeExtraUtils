@@ -3,6 +3,7 @@
 Extra utilities for cmake:
 
 - [`DynamicVersion`](cmake/DynamicVersion.md)
+- [`PackageComps`](cmake/PackageComps.md)
 
 ## Installation
 
