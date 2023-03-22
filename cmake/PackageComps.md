@@ -10,7 +10,7 @@ cmake_minimum_required(VERSION 3.25)
 
 project(My_Project)
 
-find_package(CmakeExtraUtils REQUIRED)
+find_package(CMakeExtraUtils REQUIRED)
 include(PackageComps)
 
 add_library(my_component_library)
@@ -35,7 +35,7 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/My_ProjectConfigVersion.cmake
 ```
 with `My_ProjectConfig.cmake.in`
 ```cmake
-find_package(CmakeExtraUtils REQUIRED)
+find_package(CMakeExtraUtils REQUIRED)
 include(PackageComps)
 ## Or if bundled
 # include(${CURRENT_LIST_DIR}/PackageComps.cmake)

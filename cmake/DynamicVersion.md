@@ -7,7 +7,7 @@ Calculate the project version from the git tags or `.git_archival.txt` if the so
 ```cmake
 cmake_minimum_required(VERSION 3.25)
 
-find_package(CmakeExtraUtils REQUIRED)
+find_package(CMakeExtraUtils REQUIRED)
 
 include(DynamicVersion)
 dynamic_version(PROJECT_PREFIX My_Project_)

@@ -1,4 +1,4 @@
-# CmakeExtraUtils
+# CMakeExtraUtils
 
 Extra utilities for cmake:
 
@@ -11,7 +11,7 @@ These utilities can be included using both `find_package()` and `ExternalProject
 ```cmake
 cmake_minimum_required(VERSION 3.25)
 
-find_package(CmakeExtraUtils REQUIRED)
+find_package(CMakeExtraUtils REQUIRED)
 
 include(DynamicVersion)
 dynamic_version()

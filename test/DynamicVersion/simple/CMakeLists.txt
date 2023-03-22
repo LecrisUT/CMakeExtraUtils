@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.25)
 ## The following need to be set
-#set(CmakeExtraUtils_ROOT)
+#set(CMakeExtraUtils_ROOT)
 
-find_package(CmakeExtraUtils REQUIRED)
+find_package(CMakeExtraUtils REQUIRED)
 
 include(DynamicVersion)
 dynamic_version()
