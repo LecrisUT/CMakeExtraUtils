@@ -178,12 +178,12 @@ function(dynamic_version)
 		set(${ARGS_OUTPUT_DESCRIBE} ${${ARGS_OUTPUT_DESCRIBE}} PARENT_SCOPE)
 		set(${ARGS_OUTPUT_VERSION} ${${ARGS_OUTPUT_VERSION}} PARENT_SCOPE)
 		set(${ARGS_OUTPUT_COMMIT} ${${ARGS_OUTPUT_COMMIT}} PARENT_SCOPE)
-	else ()
-		return(PROPAGATE
-				${ARGS_OUTPUT_DESCRIBE}
-				${ARGS_OUTPUT_VERSION}
-				${ARGS_OUTPUT_COMMIT})
 	endif ()
+	return(PROPAGATE
+			${ARGS_OUTPUT_DESCRIBE}
+			${ARGS_OUTPUT_VERSION}
+			${ARGS_OUTPUT_COMMIT}
+			)
 endfunction()
 
 function(get_dynamic_version)
