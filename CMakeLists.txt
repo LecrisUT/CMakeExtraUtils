@@ -14,8 +14,19 @@ project(CMakeExtraUtils
 		VERSION ${PROJECT_VERSION}
 		LANGUAGES NONE)
 
-# Install this package for find_package or propagate variables for FetchContent
-if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+# Basic options
+option(CMAKEEXTRAUTILS_INSTALL "CMakeExtraUtils: Install files" ${PROJECT_IS_TOP_LEVEL})
+option(CMAKEEXTRAUTILS_TESTS "CMakeExtraUtils: Build unit tests" ${PROJECT_IS_TOP_LEVEL})
+
+# Tests
+if (CMAKEEXTRAUTILS_TESTS)
+	enable_testing()
+	add_subdirectory(test)
+endif ()
+
+
+# Install package files
+if (CMAKEEXTRAUTILS_INSTALL)
 	# Install for find_package
 	# At least one language has to be defined for GNUInstallDirs
 	enable_language(CXX)
@@ -44,7 +55,10 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
 			cmake/PackageComps.cmake
 			DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/CMakeExtraUtils
 			)
-else ()
+endif ()
+
+# Make project available for FetchContent
+if (NOT PROJECT_IS_TOP_LEVEL)
 	# Propagate variables for FetchContent
 	# All variables have to be consistent with CMakeExtraUtilsConfig.cmake
 	if (CMAKE_VERSION VERSION_LESS 3.25)
