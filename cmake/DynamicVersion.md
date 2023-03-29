@@ -25,5 +25,5 @@ add_dependencies(version_lib My_Project_Version)
 # Rebuild `version.cpp` whenever the version changes
 # `.version` is automatically generated
 set_property(SOURCE version.cpp.in APPEND PROPERTY
-		OBJECT_DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/.version) 
+		OBJECT_DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/.version)
 ```

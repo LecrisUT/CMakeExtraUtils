@@ -5,6 +5,7 @@ Export and import targets as individual components. Special components `shared` 
 ## Example
 
 The main `CMakeLists.txt` that exports the target:
+
 ```cmake
 cmake_minimum_required(VERSION 3.25)
 
@@ -33,7 +34,9 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/My_ProjectConfigVersion.cmake
         # /path/to/PackageComps.cmake
 		DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/My_Project)
 ```
+
 with `My_ProjectConfig.cmake.in`
+
 ```cmake
 find_package(CMakeExtraUtils REQUIRED)
 include(PackageComps)
@@ -43,6 +46,7 @@ find_components(COMPONENTS my_component)
 ```
 
 The user will then be able to use:
+
 ```cmake
 cmake_minimum_required(VERSION 3.25)
 

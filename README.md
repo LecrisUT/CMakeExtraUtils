@@ -9,6 +9,7 @@ Extra utilities for cmake:
 
 These utilities can be included using both `find_package()` and `ExternalProject`, e.g. if `CMakeExtraUtils` is already
 installed on your system:
+
 ```cmake
 cmake_minimum_required(VERSION 3.25)
 
@@ -22,6 +23,7 @@ project(MyProject
 ```
 
 or if you want to download a specific version:
+
 ```cmake
 cmake_minimum_required(VERSION 3.25)
 
@@ -40,8 +42,8 @@ project(MyProject
 ## TODO for v1.0
 
 - [ ] Add Github actions:
-    - [ ] Documentation
-    - [ ] Test
-    - [ ] Release
+  - [ ] Documentation
+  - [ ] Test
+  - [ ] Release
 - [ ] Add simple pre-commit and `pyproject.toml` environment
 - [x] Fix `DynamicVersion` to work with buildable projects
