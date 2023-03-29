@@ -13,6 +13,7 @@ update_release: false
 upstream_tag_template: v{version}
 
 jobs:
+## TODO: Temporary setup until release workflow is configured
   - job: copr_build
     trigger: commit
     branch: main
@@ -27,7 +28,16 @@ jobs:
       - fedora-development-aarch64
       - fedora-latest-aarch64
       - epel-9-aarch64
-# TODO: Disabled until release workflow is configured
+  - job: tests
+    trigger: commit
+    targets:
+      - fedora-development-x86_64
+      - fedora-latest-x86_64
+      - epel-9-x86_64
+      - fedora-development-aarch64
+      - fedora-latest-aarch64
+      - epel-9-aarch64
+## TODO: Disabled until release workflow is configured
 #  - job: copr_build
 #    trigger: pull_request
 #    owner: lecris

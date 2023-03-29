@@ -1,0 +1,14 @@
+summary:
+  Full plan to do something?
+discover:
+  how: fmf
+prepare:
+#  how: ansible
+#  playbook:
+#    - distro/tmt/setup/packages.yaml
+  how: install
+  package:
+    - cmake
+    - tmt
+execute:
+  how: tmt
