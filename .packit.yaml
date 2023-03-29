@@ -1,0 +1,76 @@
+specfile_path: distro/cmake-extra-utils.spec
+
+files_to_sync:
+  - src: distro/cmake-extra-utils.spec
+    dest: cmake-extra-utils.spec
+  - .packit.yaml
+  - src: distro/cmake-extra-utils.rpmlintrc
+    dest: cmake-extra-utils.rpmlintrc
+
+upstream_package_name: CmakeExtraUtils
+downstream_package_name: cmake-extra-utils
+update_release: false
+upstream_tag_template: v{version}
+
+jobs:
+  - job: copr_build
+    trigger: commit
+    branch: main
+    owner: lecris
+    project: CMakeExtraUtils
+    update_release: true
+    release_suffix: "{PACKIT_RPMSPEC_RELEASE}"
+    targets:
+      - fedora-development-x86_64
+      - fedora-latest-x86_64
+      - epel-9-x86_64
+      - fedora-development-aarch64
+      - fedora-latest-aarch64
+      - epel-9-aarch64
+# TODO: Disabled until release workflow is configured
+#  - job: copr_build
+#    trigger: pull_request
+#    owner: lecris
+#    project: CMakeExtraUtils
+#    update_release: true
+#    release_suffix: "{PACKIT_RPMSPEC_RELEASE}"
+#    targets:
+#      - fedora-development
+#  - job: copr_build
+#    trigger: commit
+#    branch: main
+#    owner: lecris
+#    project: nightly
+#    targets:
+#      - fedora-development-x86_64
+#      - fedora-latest-x86_64
+#      - epel-9-x86_64
+#      - fedora-development-aarch64
+#      - fedora-latest-aarch64
+#      - epel-9-aarch64
+  - job: copr_build
+    trigger: release
+    owner: "@scikit-build"
+    project: releases
+    targets:
+      - fedora-development-x86_64
+      - fedora-latest-x86_64
+      - epel-9-x86_64
+      - fedora-development-aarch64
+      - fedora-latest-aarch64
+      - epel-9-aarch64
+## TODO: Disabled until released on src.fedoraproject.org
+#  - job: propose_downstream
+#    trigger: release
+#    dist_git_branches:
+#      - fedora-development
+#  - job: koji_build
+#    trigger: commit
+#    dist_git_branches:
+#      - fedora-development
+#      - fedora-latest
+#  - job: bodhi_update
+#    trigger: commit
+#    dist_git_branches:
+#      - fedora-development
+#      - fedora-latest
