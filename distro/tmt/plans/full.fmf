@@ -10,5 +10,6 @@ prepare:
   package:
     - cmake
     - tmt
+    - cmake-extra-utils
 execute:
   how: tmt
