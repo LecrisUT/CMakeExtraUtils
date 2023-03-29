@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "CMakeExtraUtils-dev"
+version = "0.0.0"
+description = "Development environment for CMakeExtraUtils"
+readme = "README.md"
+license = { file = "LICENSE" }
+
+
+[project.optional-dependencies]
+docs = [
+    "spinx >= 6.0",
+    "myst-parser >= 1.0",
+]
+dev = [
+    "pre-commit",
+]
+
+[tool.setuptools]
+packages = []
