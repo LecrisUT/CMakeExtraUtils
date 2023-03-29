@@ -24,10 +24,8 @@ jobs:
     targets:
       - fedora-development-x86_64
       - fedora-latest-x86_64
-      - epel-9-x86_64
       - fedora-development-aarch64
       - fedora-latest-aarch64
-      - epel-9-aarch64
   - job: tests
     trigger: commit
     targets:
@@ -51,10 +49,8 @@ jobs:
 #      - fedora-development
 #      - fedora-development-x86_64
 #      - fedora-latest-x86_64
-#      - epel-9-x86_64
 #      - fedora-development-aarch64
 #      - fedora-latest-aarch64
-#      - epel-9-aarch64
 #  - job: copr_build
 #    trigger: commit
 #    branch: main
@@ -63,7 +59,6 @@ jobs:
 #    targets:
 #      - fedora-development-x86_64
 #      - fedora-latest-x86_64
-#      - epel-9-x86_64
 #      - fedora-development-aarch64
 #      - fedora-latest-aarch64
 #  - job: copr_build
