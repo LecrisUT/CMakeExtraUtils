@@ -66,18 +66,15 @@ jobs:
 #      - epel-9-x86_64
 #      - fedora-development-aarch64
 #      - fedora-latest-aarch64
-#      - epel-9-aarch64
-  - job: copr_build
-    trigger: release
-    owner: "@scikit-build"
-    project: releases
-    targets:
-      - fedora-development-x86_64
-      - fedora-latest-x86_64
-      - epel-9-x86_64
-      - fedora-development-aarch64
-      - fedora-latest-aarch64
-      - epel-9-aarch64
+#  - job: copr_build
+#    trigger: release
+#    owner: lecris
+#    project: releases
+#    targets:
+#      - fedora-development-x86_64
+#      - fedora-latest-x86_64
+#      - fedora-development-aarch64
+#      - fedora-latest-aarch64
 ## TODO: Disabled until released on src.fedoraproject.org
 #  - job: propose_downstream
 #    trigger: release
