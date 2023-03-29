@@ -1,3 +1,5 @@
 build/
 /build*
 cmake-build*/
+*.tar.gz
+*.rpm

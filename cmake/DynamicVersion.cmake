@@ -267,6 +267,12 @@ function(get_dynamic_version)
 		string(JSON data SET
 				${data} version \"${CMAKE_MATCH_2}\")
 		file(WRITE ${ARGS_TMP_FOLDER}/.version ${CMAKE_MATCH_2})
+		# Get commit hash
+		file(STRINGS ${ARGS_GIT_ARCHIVAL_FILE} node
+				REGEX "^node:[ ]?(.*)")
+		string(JSON data SET
+				${data} commit \"${CMAKE_MATCH_1}\")
+		file(WRITE ${ARGS_TMP_FOLDER}/.git_commit ${CMAKE_MATCH_1})
 		message(DEBUG "DynamicVersion: Found appropriate tag in .git_archival.txt file")
 	else ()
 		# If not it has to be computed from the git archive

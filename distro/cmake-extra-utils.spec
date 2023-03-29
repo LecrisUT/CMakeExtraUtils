@@ -13,6 +13,7 @@ Source1:        %{name}.rpmlintrc
 BuildArch:      noarch
 BuildRequires:  cmake
 BuildRequires:  gcc
+BuildRequires:  gcc-c++
 Requires:       cmake
 
 %description
@@ -22,6 +23,7 @@ A collection of helpful cmake scripts
 %autosetup -n %{upstream_name}-%{version}
 
 %build
+%cmake
 %cmake_build
 
 %install
