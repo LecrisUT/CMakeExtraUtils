@@ -28,10 +28,10 @@ jobs:
       - fedora-development-aarch64
       - fedora-latest-aarch64
       - epel-9-aarch64
-  - job: tests
-    trigger: commit
-    targets:
-      - fedora-development
+#  - job: tests
+#    trigger: commit
+#    targets:
+#      - fedora-development
 ## TODO: Disabled until release workflow is configured
 #  - job: tests
 #    trigger: pull_request
