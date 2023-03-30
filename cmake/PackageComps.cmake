@@ -580,6 +580,19 @@ function(export_component)
 	set(LIB_TYPE_Choices "")
 	list(APPEND LIB_TYPE_Choices static shared)
 
+	# Include GNUInstallDirs if not done already
+	if (NOT DEFINED CMAKE_INSTALL_DATAROOTDIR)
+		include(GNUInstallDirs)
+	endif ()
+
+	# Choose appropriate target install location
+	get_property(ENABLED_LANGUAGES GLOBAL PROPERTY ENABLED_LANGUAGES)
+	if (NOT ENABLED_LANGUAGES)
+		set(install_prefix ${CMAKE_INSTALL_DATAROOTDIR})
+	else ()
+		set(install_prefix ${CMAKE_INSTALL_LIBDIR})
+	endif ()
+
 	cmake_parse_arguments(ARGS "${ARGS_Options}" "${ARGS_OneValue}" "${ARGS_MultiValue}" ${ARGN})
 
 	if (NOT DEFINED ARGS_PROJECT)
@@ -621,7 +634,7 @@ function(export_component)
 	install(EXPORT ${ARGS_TARGET}
 			FILE ${TargetFile}
 			NAMESPACE ${ARGS_PROJECT}::
-			DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${ARGS_PROJECT}
+			DESTINATION ${install_prefix}/cmake/${ARGS_PROJECT}
 			COMPONENT ${ARGS_PROJECT}_Development)
 	export(EXPORT ${ARGS_TARGET}
 			FILE ${TargetFile}
