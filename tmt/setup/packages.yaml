@@ -1,0 +1,10 @@
+- hosts: all
+  tasks:
+    - name: Get minimum packages
+      ansible.builtin.dnf:
+        name:
+          - cmake
+          - git
+          - rsync
+          - gcc
+          - gcc-c++

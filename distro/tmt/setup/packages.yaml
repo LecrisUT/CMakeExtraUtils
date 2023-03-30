@@ -1,7 +1,0 @@
-- hosts: localhost
-  tasks:
-    - name: Get minimum packages
-      ansible.builtin.package:
-        name:
-          - cmake
-          - tmt
