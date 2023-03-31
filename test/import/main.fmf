@@ -1,0 +1,12 @@
+# Common test variables
+tag:
+  - import
+  - basic
+
+# Define tests
+/find_package:
+  summary: Test `find_package` import
+  test: ./test_find_package.sh
+/FetchContent:
+  summary: Test `FetchContent` import
+  test: ./test_FetchContent.sh

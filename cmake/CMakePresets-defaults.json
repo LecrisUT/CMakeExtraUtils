@@ -13,13 +13,6 @@
       }
     }
   ],
-  "testPresets": [
-    {
-      "name": "default",
-      "displayName": "Default test preset",
-      "configurePreset": "default"
-    }
-  ],
   "workflowPresets": [
     {
       "name": "default",
@@ -27,10 +20,6 @@
       "steps": [
         {
           "type": "configure",
-          "name": "default"
-        },
-        {
-          "type": "test",
           "name": "default"
         }
       ]

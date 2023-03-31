@@ -104,15 +104,15 @@ function(dynamic_version)
 			TMP_FOLDER ${ARGS_TMP_FOLDER}
 			)
 	if (DEFINED ARGS_FALLBACK_VERSION)
-		list(DynamicVersion_ARGS APPEND
+		list(APPEND DynamicVersion_ARGS
 				FALLBACK_VERSION ${ARGS_FALLBACK_VERSION})
 	endif ()
 	if (DEFINED ARGS_FALLBACK_HASH)
-		list(DynamicVersion_ARGS APPEND
+		list(APPEND DynamicVersion_ARGS
 				FALLBACK_HASH ${ARGS_FALLBACK_HASH})
 	endif ()
 	if (ARGS_ALLOW_FAILS)
-		list(DynamicVersion_ARGS APPEND ALLOW_FAILS)
+		list(APPEND DynamicVersion_ARGS ALLOW_FAILS)
 	endif ()
 	# Normalize DynamicVersion_ARGS to be passed as string
 	list(JOIN DynamicVersion_ARGS "\\;" DynamicVersion_ARGS)
@@ -127,7 +127,9 @@ function(dynamic_version)
 
 	# Copy all configured files
 	foreach (file IN ITEMS .DynamicVersion.json .version .git_describe .git_commit)
-		file(COPY_FILE ${ARGS_TMP_FOLDER}/${file} ${ARGS_OUTPUT_FOLDER}/${file})
+		if (EXISTS ${file})
+			file(COPY_FILE ${ARGS_TMP_FOLDER}/${file} ${ARGS_OUTPUT_FOLDER}/${file})
+		endif ()
 	endforeach ()
 
 	# Check configuration state
@@ -246,13 +248,21 @@ function(get_dynamic_version)
 	endif ()
 
 
+	if (NOT EXISTS ${ARGS_GIT_ARCHIVAL_FILE})
+		# If git_archival.txt is missing, project is ill-formed
+		message(${error_message_type}
+				"DynamicVersion: Missing file .git_archival.txt\n"
+				"  .git_archival.txt: ${ARGS_GIT_ARCHIVAL_FILE}")
+		return()
+	endif ()
+
 	# Get version dynamically from git_archival.txt
 	file(STRINGS ${ARGS_GIT_ARCHIVAL_FILE} describe-name
 			REGEX "^describe-name:.*")
 	if (NOT describe-name)
 		# If git_archival.txt does not contain the field "describe-name:", it is ill-formed
 		message(${error_message_type}
-				"DynamicVersion: Missing file or string \"describe-name\" in .git_archival.txt\n"
+				"DynamicVersion: Missing string \"describe-name\" in .git_archival.txt\n"
 				"  .git_archival.txt: ${ARGS_GIT_ARCHIVAL_FILE}")
 		return()
 	endif ()

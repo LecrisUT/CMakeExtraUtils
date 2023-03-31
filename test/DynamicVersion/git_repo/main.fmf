@@ -1,0 +1,17 @@
+# Common test variables
+tag:
+  - DynamicVersion
+  - git_repo
+
+# Define tests
+/not_git:
+  summary: Fail if not a git archive
+  test: ./test_not_git.sh
+  result: xfail
+/no_tag:
+  summary: Fail if do not have tag to calculate
+  test: ./test_no_tag.sh
+  result: xfail
+/basic:
+  summary: Test basic setup
+  test: ./test_basic.sh
