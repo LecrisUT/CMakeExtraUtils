@@ -13,63 +13,46 @@ update_release: false
 upstream_tag_template: v{version}
 
 jobs:
-## TODO: Temporary setup until release workflow is configured
+  - job: tests
+    trigger: pull_request
+    targets:
+      - fedora-development
   - job: copr_build
-    trigger: commit
-    branch: main
+    trigger: pull_request
     owner: lecris
     project: CMakeExtraUtils
     update_release: true
     release_suffix: "{PACKIT_RPMSPEC_RELEASE}"
     targets:
+      - fedora-development
+  - job: tests
+    trigger: commit
+    branch: main
+    targets:
+      - fedora-development
       - fedora-development-x86_64
       - fedora-latest-x86_64
       - fedora-development-aarch64
       - fedora-latest-aarch64
-  - job: tests
+  - job: copr_build
     trigger: commit
+    branch: main
+    owner: lecris
+    project: nightly
     targets:
-      - fedora-development
-## TODO: Disabled until release workflow is configured
-#  - job: tests
-#    trigger: pull_request
-#    targets:
-#      - fedora-development
-#  - job: copr_build
-#    trigger: pull_request
-#    owner: lecris
-#    project: CMakeExtraUtils
-#    update_release: true
-#    release_suffix: "{PACKIT_RPMSPEC_RELEASE}"
-#    targets:
-#      - fedora-development
-#  - job: tests
-#    trigger: commit
-#    targets:
-#      - fedora-development
-#      - fedora-development-x86_64
-#      - fedora-latest-x86_64
-#      - fedora-development-aarch64
-#      - fedora-latest-aarch64
-#  - job: copr_build
-#    trigger: commit
-#    branch: main
-#    owner: lecris
-#    project: nightly
-#    targets:
-#      - fedora-development-x86_64
-#      - fedora-latest-x86_64
-#      - fedora-development-aarch64
-#      - fedora-latest-aarch64
-#  - job: copr_build
-#    trigger: release
-#    owner: lecris
-#    project: releases
-#    targets:
-#      - fedora-development-x86_64
-#      - fedora-latest-x86_64
-#      - fedora-development-aarch64
-#      - fedora-latest-aarch64
+      - fedora-development-x86_64
+      - fedora-latest-x86_64
+      - fedora-development-aarch64
+      - fedora-latest-aarch64
+  - job: copr_build
+    trigger: release
+    owner: lecris
+    project: release
+    targets:
+      - fedora-development-x86_64
+      - fedora-latest-x86_64
+      - fedora-development-aarch64
+      - fedora-latest-aarch64
 ## TODO: Disabled until released on src.fedoraproject.org
 #  - job: propose_downstream
 #    trigger: release

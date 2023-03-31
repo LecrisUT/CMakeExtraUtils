@@ -1,0 +1,8 @@
+# Common test variables
+tag:
+  - PackageComps
+
+# Define tests
+/simple:
+  summary: Test simple PackageComps configuration
+  test: ./test_simple.sh

@@ -16,21 +16,13 @@ project(CMakeExtraUtils
 
 # Basic options
 option(CMAKEEXTRAUTILS_INSTALL "CMakeExtraUtils: Install files" ${PROJECT_IS_TOP_LEVEL})
-option(CMAKEEXTRAUTILS_TESTS "CMakeExtraUtils: Build unit tests" ${PROJECT_IS_TOP_LEVEL})
-
-# Tests
-if (CMAKEEXTRAUTILS_TESTS)
-	enable_testing()
-	add_subdirectory(test)
-endif ()
 
 
 # Install package files
 if (CMAKEEXTRAUTILS_INSTALL)
 	# Install for find_package
-	# At least one language has to be defined for GNUInstallDirs
-	enable_language(CXX)
 	include(CMakePackageConfigHelpers)
+	# Will show developer warning, but can't supress it :(
 	include(GNUInstallDirs)
 	# Package files
 	write_basic_package_version_file(
@@ -42,18 +34,18 @@ if (CMAKEEXTRAUTILS_INSTALL)
 	configure_package_config_file(
 			cmake/CMakeExtraUtilsConfig.cmake.in
 			CMakeExtraUtilsConfig.cmake
-			INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/CMakeExtraUtils
+			INSTALL_DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/cmake/CMakeExtraUtils
 	)
 	install(FILES
 			${CMAKE_CURRENT_BINARY_DIR}/CMakeExtraUtilsConfigVersion.cmake
 			${CMAKE_CURRENT_BINARY_DIR}/CMakeExtraUtilsConfig.cmake
-			DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/CMakeExtraUtils
+			DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/cmake/CMakeExtraUtils
 			)
 	# Bundled cmake files
 	install(FILES
 			cmake/DynamicVersion.cmake
 			cmake/PackageComps.cmake
-			DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/CMakeExtraUtils
+			DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/cmake/CMakeExtraUtils
 			)
 endif ()
 

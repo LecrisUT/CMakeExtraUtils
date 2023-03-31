@@ -1,0 +1,9 @@
+# Common test variables
+tag:
+  - DynamicVersion
+  - fallback
+
+# Define tests
+/basic:
+  summary: Basic configuration
+  test: ./test_basic.sh

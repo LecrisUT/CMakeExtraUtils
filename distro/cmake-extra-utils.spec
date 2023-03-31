@@ -35,7 +35,7 @@ A collection of helpful cmake scripts
 %files
 %license LICENSE
 %doc README.md
-%{_libdir}/cmake/CMakeExtraUtils
+%{_datadir}/cmake/CMakeExtraUtils
 
 %changelog
 %autochangelog
