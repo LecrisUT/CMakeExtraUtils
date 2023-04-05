@@ -41,9 +41,9 @@ project(MyProject
 
 ## TODO for v1.0
 
-- [ ] Add Github actions:
-  - [ ] Documentation
-  - [ ] Test
-  - [ ] Release
-- [ ] Add simple pre-commit and `pyproject.toml` environment
+- [x] Automation:
+- [x] Add simple pre-commit and `pyproject.toml` environment
 - [x] Fix `DynamicVersion` to work with buildable projects
+- [ ] Test coverage:
+  - [ ] `DynamicVersion`
+  - [ ] `PackageComps`
