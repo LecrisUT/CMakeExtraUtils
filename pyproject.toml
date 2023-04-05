@@ -12,8 +12,12 @@ license = { file = "LICENSE" }
 
 [project.optional-dependencies]
 docs = [
-    "spinx >= 6.0",
+    "sphinx >= 6.0",
+    "sphinx-rtd-theme",
+    "sphinx-design @ git+https://github.com/marxin/sphinx-design@sphinx-6",
+    "sphinx-togglebutton",
     "myst-parser >= 1.0",
+    "breathe",
 ]
 dev = [
     "pre-commit",

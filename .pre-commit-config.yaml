@@ -13,16 +13,17 @@ repos:
         additional_dependencies:
           - mdformat-gfm
           - mdformat-tables
-        exclude: docs\/(?!README\.md).*
+        exclude: doc\/(?!README\.md).*
     # TODO: Temporarily separate docs formatiing
     # https://github.com/executablebooks/mdformat/issues/234
-  - repo: https://github.com/executablebooks/mdformat
-    rev: 0.7.16
-    hooks:
-      - id: mdformat
-        additional_dependencies:
-          - mdformat-myst
-        files: docs\/(?!README).*\.md$
+    # TODO: Disabled due to lack of colon-fence support
+#  - repo: https://github.com/executablebooks/mdformat
+#    rev: 0.7.16
+#    hooks:
+#      - id: mdformat
+#        additional_dependencies:
+#          - mdformat-myst
+#        files: doc\/(?!README).*\.md$
   - repo: https://github.com/python-jsonschema/check-jsonschema
     rev: 0.21.0
     hooks:
