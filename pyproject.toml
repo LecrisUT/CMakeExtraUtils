@@ -14,9 +14,9 @@ license = { file = "LICENSE" }
 docs = [
     "sphinx >= 6.0",
     "sphinx-rtd-theme",
-    "sphinx-design @ git+https://github.com/marxin/sphinx-design@sphinx-6",
+    "sphinx-design",
     "sphinx-togglebutton",
-    "myst-parser >= 1.0",
+    "myst-parser",
     "breathe",
 ]
 dev = [
