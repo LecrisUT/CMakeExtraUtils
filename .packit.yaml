@@ -11,6 +11,7 @@ files_to_sync:
     filters:
       - "- tmt/.gitignore"
       - "- tmt/main.fmf.dist-git"
+      - "- tmt/plans/rpmlint.fmf"
   - src: tmt/main.fmf.dist-git
     dest: tmt/main.fmf
 

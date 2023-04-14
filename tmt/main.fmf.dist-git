@@ -1,6 +1,0 @@
-discover:
-  how: fmf
-  dist-git-source: true
-  # Excluding rpmlint/rpminspect because these are handled by zuul-ci
-  # Should disable rpmlint plan instead, but don't know how
-  exclude: /test/rpmlint/.*
