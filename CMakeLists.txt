@@ -30,6 +30,7 @@ if (CMAKEEXTRAUTILS_INSTALL)
 			VERSION ${PROJECT_VERSION}
 			# TODO: Currently unstable api, change when v1.0 is released
 			COMPATIBILITY SameMinorVersion
+			ARCH_INDEPENDENT
 	)
 	configure_package_config_file(
 			cmake/CMakeExtraUtilsConfig.cmake.in
