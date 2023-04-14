@@ -1,0 +1,21 @@
+# Common test variables
+tag:
+  - rpmlint
+path: /
+
+# Define tests
+/rpmlint-spec:
+  summary: Rpmlint the spec files
+  test: rpmlint ./distro/*.spec
+/rpmlint-source-rpm:
+  summary: Rpmlint the source rpm
+  test: rpmlint /tmp/*.src.rpm
+/rpmlint-rpms:
+  summary: Rpmlint the package rpms
+  test: rpmlint /tmp/!(*.src).rpm
+/rpminspect-source-rpm:
+  summary: rpminspect the source rpm
+  test: ls /tmp/*.src.rpm | xargs -L1 rpminspect-fedora
+/rpminspect-rpms:
+  summary: Rpmlint the package rpms
+  test: ls /tmp/!(*.src).rpm | xargs -L1 rpminspect-fedora

@@ -6,6 +6,13 @@ files_to_sync:
   - .packit.yaml
   - src: distro/cmake-extra-utils.rpmlintrc
     dest: cmake-extra-utils.rpmlintrc
+  - src: tmt
+    dest: .
+    filters:
+      - "- tmt/.gitignore"
+      - "- tmt/main.fmf.dist-git"
+  - src: tmt/main.fmf.dist-git
+    dest: tmt/main.fmf
 
 upstream_package_name: CmakeExtraUtils
 downstream_package_name: cmake-extra-utils

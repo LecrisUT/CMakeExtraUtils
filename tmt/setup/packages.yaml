@@ -8,3 +8,8 @@
           - rsync
           - gcc
           - gcc-c++
+          - rpmlint
+          - rpminspect
+          - rpminspect-data-fedora
+          # For xargs
+          - findutils
