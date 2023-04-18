@@ -1,19 +1,20 @@
-specfile_path: distro/cmake-extra-utils.spec
+specfile_path: .distro/cmake-extra-utils.spec
 
 files_to_sync:
-  - src: distro/cmake-extra-utils.spec
+  - src: .distro/cmake-extra-utils.spec
     dest: cmake-extra-utils.spec
   - .packit.yaml
-  - src: distro/cmake-extra-utils.rpmlintrc
+  - src: .distro/cmake-extra-utils.rpmlintrc
     dest: cmake-extra-utils.rpmlintrc
-  - src: tmt
-    dest: .
+  - src: .fmf/
+    dest: .fmf/
+  - src: test/plans/
+    dest: plans/
     filters:
-      - "- tmt/.gitignore"
-      - "- tmt/main.fmf.dist-git"
-      - "- tmt/plans/rpmlint.fmf"
-  - src: tmt/main.fmf.dist-git
-    dest: tmt/main.fmf
+      - "- test/plans/main.fmf.dist-git"
+      - "- test/plans/rpmlint.fmf"
+  - src: test/plans/main.fmf.dist-git
+    dest: plans/main.fmf
 
 upstream_package_name: CmakeExtraUtils
 downstream_package_name: cmake-extra-utils

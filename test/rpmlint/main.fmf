@@ -1,15 +1,11 @@
 # Common test variables
 tag:
   - rpmlint
-path: /distro
 
 # Define tests
-/rpmlint-spec:
-  summary: Rpmlint the spec files
-  test: rpmlint ./*.spec
-/rpmlint-rpms:
-  summary: Rpmlint the rpms
-  test: rpmlint -c packit.toml /tmp/*.rpm
+/rpmlint:
+  summary: Rpmlint spec and rpmfiles
+  test: rpmlint -c packit.toml -r cmake-extra-utils.rpmlintrc ./*.spec /tmp/*.rpm
 /rpminspect-rpms:
   summary: Rpminspect the rpms
   test: ls /tmp/*.rpm | xargs -L1 rpminspect-fedora -E metadata,disttag
