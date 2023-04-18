@@ -655,4 +655,3 @@ cython_debug/
 ### Project specific
 *.tar.gz
 *.rpm
-/main.fmf

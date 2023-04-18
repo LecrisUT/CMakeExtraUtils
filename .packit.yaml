@@ -6,14 +6,16 @@ files_to_sync:
   - .packit.yaml
   - src: distro/cmake-extra-utils.rpmlintrc
     dest: cmake-extra-utils.rpmlintrc
-  - src: tmt
-    dest: .
+  - src: test/.fmf/
+    dest: .fmf
+  - src: test/plans/
+    dest: plans
     filters:
-      - "- tmt/.gitignore"
-      - "- tmt/main.fmf.dist-git"
-      - "- tmt/plans/rpmlint.fmf"
-  - src: tmt/main.fmf.dist-git
-    dest: tmt/main.fmf
+      - "- test/plans/.gitignore"
+      - "- test/plans/main.fmf.dist-git"
+      - "- test/plans/rpmlint.fmf"
+  - src: test/plans/main.fmf.dist-git
+    dest: plans/main.fmf
 
 upstream_package_name: CmakeExtraUtils
 downstream_package_name: cmake-extra-utils
@@ -25,6 +27,7 @@ jobs:
     trigger: pull_request
     targets:
       - fedora-development
+    fmf_path: test
   - job: copr_build
     trigger: pull_request
     owner: lecris
@@ -39,6 +42,7 @@ jobs:
     targets:
       - fedora-development
       - fedora-latest
+    fmf_path: test
   - job: copr_build
     trigger: commit
     branch: main
