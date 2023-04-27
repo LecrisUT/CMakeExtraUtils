@@ -29,6 +29,10 @@ jobs:
     targets:
       - fedora-development
     fmf_path: ./test
+    tf_extra_params:
+      test:
+        fmf:
+          path: ./test
   - job: copr_build
     trigger: pull_request
     owner: lecris
