@@ -28,7 +28,7 @@ jobs:
     trigger: pull_request
     targets:
       - fedora-development
-    fmf_path: test
+    fmf_path: ./test
   - job: copr_build
     trigger: pull_request
     owner: lecris
@@ -43,7 +43,7 @@ jobs:
     targets:
       - fedora-development
       - fedora-latest
-    fmf_path: test
+    fmf_path: ./test
   - job: copr_build
     trigger: commit
     branch: main
