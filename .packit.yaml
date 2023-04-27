@@ -33,6 +33,7 @@ jobs:
       test:
         fmf:
           path: /test
+          plan_filter: "enabled:true"
   - job: copr_build
     trigger: pull_request
     owner: lecris
