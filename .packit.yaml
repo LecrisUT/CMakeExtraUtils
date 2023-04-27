@@ -28,14 +28,14 @@ jobs:
     trigger: pull_request
     targets:
       - fedora-development
-    fmf_path: ./test
-    tf_extra_params:
-      test:
-        fmf:
-        tmt:
-          path: /test/
-          plan_filter: "enabled:true"
-          ref: test-tmt-path
+    fmf_path: test
+#    tf_extra_params:
+#      test:
+#        fmf:
+#        tmt:
+#          path: /test/
+#          plan_filter: "enabled:true"
+#          ref: test-tmt-path
   - job: copr_build
     trigger: pull_request
     owner: lecris
