@@ -32,7 +32,7 @@ jobs:
     tf_extra_params:
       test:
         fmf:
-          path: ./test
+          path: /test
   - job: copr_build
     trigger: pull_request
     owner: lecris
