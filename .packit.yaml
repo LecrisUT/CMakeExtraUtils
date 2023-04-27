@@ -21,6 +21,7 @@ upstream_package_name: CmakeExtraUtils
 downstream_package_name: cmake-extra-utils
 update_release: false
 upstream_tag_template: v{version}
+packit_instances: ["stg"]
 
 jobs:
   - job: tests
