@@ -32,6 +32,7 @@ jobs:
     tf_extra_params:
       test:
         fmf:
+        tmt:
           path: /test/
           plan_filter: "enabled:true"
           ref: test-tmt-path
