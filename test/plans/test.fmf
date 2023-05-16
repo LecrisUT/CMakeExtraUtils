@@ -3,7 +3,7 @@ prepare:
   - name: "Prepare ansible"
     how: ansible
     playbook:
-      - tmt/setup/packages.yaml
+      - plans/setup/packages.yaml
 execute:
   how: tmt
 
