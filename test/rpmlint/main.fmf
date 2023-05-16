@@ -9,7 +9,7 @@ path: /
   test: rpmlint ./*.spec
 /rpmlint-rpms:
   summary: Rpmlint the rpms
-  test: rpmlint -c packit.toml /tmp/*.rpm
+  test: rpmlint -c rpmlint/packit.toml /tmp/*.rpm
 /rpminspect-rpms:
   summary: Rpminspect the rpms
   test: ls /tmp/*.rpm | xargs -L1 rpminspect-fedora -E metadata,disttag
