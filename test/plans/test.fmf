@@ -1,11 +1,9 @@
 # Common plan variables
-provision:
-  how: container
 prepare:
   - name: "Prepare ansible"
     how: ansible
     playbook:
-      - tmt/setup/packages.yaml
+      - test/plans/setup/packages.yaml
 execute:
   how: tmt
 
@@ -13,13 +11,13 @@ execute:
 /import:
   summary:
     Test import functionalities
-  discover:
+  discover+:
     how: fmf
     filter: "tag: import"
 /DynamicVersion/archive:
   summary:
     Test DynamicVersion for archives
-  discover:
+  discover+:
     how: fmf
     filter:
       - "tag: DynamicVersion"
@@ -27,7 +25,7 @@ execute:
 /DynamicVersion/git_repo:
   summary:
     Test DynamicVersion for git repos
-  discover:
+  discover+:
     how: fmf
     filter:
       - "tag: DynamicVersion"
@@ -35,7 +33,7 @@ execute:
 /DynamicVersion/fallback:
   summary:
     Test DynamicVersion fallbacks
-  discover:
+  discover+:
     how: fmf
     filter:
       - "tag: DynamicVersion"
@@ -43,6 +41,6 @@ execute:
 /PackageComps:
   summary:
     Test PackageComps
-  discover:
+  discover+:
     how: fmf
     filter: "tag: PackageComps"
