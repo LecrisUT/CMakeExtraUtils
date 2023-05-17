@@ -14,23 +14,29 @@ Requires:       cmake
 %description
 A collection of helpful cmake scripts
 
+
 %prep
 %autosetup -n CMakeExtraUtils-%{version}
+
 
 %build
 %cmake
 %cmake_build
 
+
 %install
 %cmake_install
 
+
 %check
 %ctest
+
 
 %files
 %license LICENSE
 %doc README.md
 %{_datadir}/cmake/CMakeExtraUtils
+
 
 %changelog
 %autochangelog
