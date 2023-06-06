@@ -34,6 +34,8 @@ jobs:
     targets:
       - fedora-development-x86_64
       - fedora-latest-x86_64
+      - fedora-development-aarch64
+      - fedora-latest-aarch64
   - job: tests
     trigger: commit
     branch: main
