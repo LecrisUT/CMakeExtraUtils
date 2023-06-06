@@ -26,6 +26,7 @@ jobs:
     trigger: pull_request
     targets:
       - fedora-development
+      - fedora-latest
   - job: copr_build
     trigger: pull_request
     owner: lecris
@@ -33,7 +34,10 @@ jobs:
     update_release: true
     release_suffix: "{PACKIT_RPMSPEC_RELEASE}"
     targets:
-      - fedora-development
+      - fedora-development-x86_64
+      - fedora-latest-x86_64
+      - fedora-development-aarch64
+      - fedora-latest-aarch64
   - job: tests
     trigger: commit
     branch: main
