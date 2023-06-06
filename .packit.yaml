@@ -30,10 +30,9 @@ jobs:
     trigger: pull_request
     owner: lecris
     project: CMakeExtraUtils
-    update_release: true
-    release_suffix: "{PACKIT_RPMSPEC_RELEASE}"
     targets:
-      - fedora-development
+      - fedora-development-x86_64
+      - fedora-development-aarch64
   - job: tests
     trigger: commit
     branch: main
