@@ -1,9 +1,0 @@
-# Common test variables
-tag:
-  - DynamicVersion
-  - archive
-
-# Define tests
-/basic:
-  summary: Basic configuration
-  test: ./test_basic.sh

@@ -10,34 +10,16 @@ execute:
 # Define plans
 /import:
   summary:
-    Test import functionalities
+    Test CMake import functionalities
   discover+:
     how: fmf
     filter: "tag: import"
-/DynamicVersion/archive:
+/DynamicVersion:
   summary:
-    Test DynamicVersion for archives
+    Test DynamicVersion
   discover+:
     how: fmf
-    filter:
-      - "tag: DynamicVersion"
-      - "tag: archive"
-/DynamicVersion/git_repo:
-  summary:
-    Test DynamicVersion for git repos
-  discover+:
-    how: fmf
-    filter:
-      - "tag: DynamicVersion"
-      - "tag: git_repo"
-/DynamicVersion/fallback:
-  summary:
-    Test DynamicVersion fallbacks
-  discover+:
-    how: fmf
-    filter:
-      - "tag: DynamicVersion"
-      - "tag: fallback"
+    filter: "tag: DynamicVersion"
 /PackageComps:
   summary:
     Test PackageComps

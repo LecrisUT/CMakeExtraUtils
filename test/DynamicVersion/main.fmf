@@ -1,0 +1,15 @@
+# Common test variables
+tag:
+  - DynamicVersion
+framework: beakerlib
+
+# Define tests
+/git_repo:
+  summary: Test DynamicVersion with a git repository
+  test: ./test_git.sh
+/archive:
+  summary: Test DynamicVersion as a git archive
+  test: ./test_archive.sh
+/fallback:
+  summary: Test DynamicVersion fallbacks
+  test: ./test_fallback.sh
