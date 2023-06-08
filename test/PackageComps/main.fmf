@@ -2,7 +2,6 @@
 tag:
   - PackageComps
 
-# Define tests
-/simple:
-  summary: Test simple PackageComps configuration
-  test: ./test_simple.sh
+framework: beakerlib
+summary: Test PackageComps module
+test: ./test.sh
