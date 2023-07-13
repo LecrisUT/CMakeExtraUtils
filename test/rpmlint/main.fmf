@@ -8,4 +8,4 @@ tag:
   test: rpmlint -c packit.toml -r cmake-extra-utils.rpmlintrc ./*.spec /tmp/*.rpm
 /rpminspect-rpms:
   summary: Rpminspect the rpms
-  test: ls /tmp/*.rpm | xargs -L1 rpminspect-fedora -E metadata,disttag
+  test: ls /var/share/test-artifacts/*.rpm | xargs -L1 rpminspect-fedora -E metadata,disttag
