@@ -25,14 +25,19 @@ jobs:
   - job: tests
     trigger: pull_request
     targets:
-      - fedora-development
+      - fedora-development-x86_64
+      - fedora-latest-x86_64
+      - fedora-development-x86_64
+      - fedora-latest-x86_64
   - job: copr_build
     trigger: pull_request
     owner: lecris
     project: CMakeExtraUtils
     targets:
       - fedora-development-x86_64
-      - fedora-development-aarch64
+      - fedora-latest-x86_64
+      - fedora-development-x86_64
+      - fedora-latest-x86_64
   - job: tests
     trigger: commit
     branch: main
