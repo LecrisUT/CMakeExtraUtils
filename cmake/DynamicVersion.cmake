@@ -1,44 +1,125 @@
-## Helper to get dynamic version
-# Format is made compatible with python's setuptools_scm (https://github.com/pypa/setuptools_scm#git-archives)
+#[===[.md:
+# DynamicVersion
+
+Helper module to get the project's version dynamically. Format is compatible with python's
+[`setuptools_scm`](https://github.com/pypa/setuptools_scm#git-archives)
+
+## Commands
+
+- {command}`dynamic_version`
+
+]===]
+
+include_guard()
+
+#[==============================================================================================[
+#                                         Preparations                                         #
+]==============================================================================================]
+
+# No specific preparations
+
+#[==============================================================================================[
+#                                        Main interface                                        #
+]==============================================================================================]
 
 function(dynamic_version)
-	# Configure project to use dynamic versioning
-	#
-	# Named arguments::
-	#   PROJECT_PREFIX (string): Prefix to be used for namespacing targets, typically ${PROJECT_NAME}
-	#   OUTPUT_VERSION (string) [PROJECT_VERSION]: Variable where to save the calculated version
-	#   OUTPUT_DESCRIBE (string) [GIT_DESCRIBE]: Variable where to save the pure git_describe
-	#   OUTPUT_COMMIT (string) [GIT_COMMIT]: Variable where to save the git commit
-	#   PROJECT_SOURCE (path) [${CMAKE_CURRENT_SOURCE_DIR}]: Location of the project source.
-	#     (either extracted git archive or git clone)
-	#   GIT_ARCHIVAL_FILE (path) [${PROJECT_SOURCE}/.git_archival.txt]: Location of .git_archival.txt
-	#   FALLBACK_VERSION (string): Fallback version
-	#   FALLBACK_HASH (string): Fallback git hash. If not defined target GitHash will not be created if project is not a
-	#     git repo
-	#   TMP_FOLDER (path) [${CMAKE_CURRENT_BINARY_DIR}/tmp]: Temporary path to store temporary files
-	#   OUTPUT_FOLDER (path) [${CMAKE_CURRENT_BINARY_DIR}]: Path where to store generated files
-	#
-	# Options::
-	#   ALLOW_FAILS: Do not return with FATAL_ERROR. Developer is responsible for setting appropriate version if fails
-	#
-	# Targets::
-	#   ${PROJECT_PREFIX}Version: Target that recalculates the dynamic version each time
-	#   ${PROJECT_PREFIX}GitHash:
-	#
-	# Generated files::
-	#   (Note: files are regenerated only when they change)
-	#   ${OUTPUT_FOLDER}/.DynamicVersion.json: All computed data of DynamicVersion
-	#   ${OUTPUT_FOLDER}/.version: Extracted version
-	#   ${OUTPUT_FOLDER}/.git_describe: Computed git describe
-	#	${OUTPUT_FOLDER}/.git_commit: Current commit
+	#[===[.md:
+	# dynamic_version
 
-	set(ARGS_Options "")
-	set(ARGS_OneValue "")
-	set(ARGS_MultiValue "")
-	list(APPEND ARGS_Options
+	Configure project to use dynamic versioning
+
+	## Synopsis
+	```cmake
+	Main interface
+	  dynamic_version(PROJECT_PREFIX <prefix>)
+	  dynamic_version(PROJECT_PREFIX <prefix>
+	  	[OUTPUT_VERSION <var>] [OUTPUT_DESCRIBE <var>] [OUTPUT_COMMIT <var>]
+	  	[PROJECT_SOURCE <path>] [GIT_ARCHIVAL_FILE <file>])
+
+	Fallbacks
+	  dynamic_version(...
+	  	[ALLOW_FAILS] [FALLBACK_VERSION <version>] [FALLBACK_HASH <string>])
+
+	Additional configurations
+	  dynamic_version(...
+	  	[TMP_FOLDER <path>] [FALLBACK_VERSION <version>] [FALLBACK_HASH <string>])
+	```
+
+	## Options
+	`PROJECT_PREFIX`
+	  Prefix to be used for namespacing targets, typically ${PROJECT_NAME}
+
+	`OUTPUT_VERSION` [Default: PROJECT_VERSION]
+	  Variable where to save the calculated version
+
+	`OUTPUT_DESCRIBE` [Default: GIT_DESCRIBE]
+	  Variable where to save the pure `git describe` output
+
+	`OUTPUT_COMMIT` [Default: GIT_COMMIT]
+	  Variable where to save the current git commit hash
+
+	`PROJECT_SOURCE` [Default: `${CMAKE_CURRENT_SOURCE_DIR}`]
+	  Location of the project source. Has to be either an extracted git archive or a git clone
+
+	`GIT_ARCHIVAL_FILE` [Default: `${PROJECT_SOURCE}/.git_archival.txt`]
+	  Location of `.git_archival.txt` file. See [pypa/setuptools_scm](https://github.com/pypa/setuptools_scm#git-archives)
+	  for more details
+
+	`FALLBACK_VERSION`
+	  Fallback version to be set if version cannot be dynamically determined. Implies `ALLOW_FAILS`
+
+	`FALLBACK_HASH`
+	  Fallback git hash to be used in `OUTPUT_COMMIT` if commit cannot be determined.
+	  If not defined target GitHash will not be created if project is not a git repo
+
+	`ALLOW_FAILS`
+	  Do not return with `FATAL_ERROR` if version cannot be dynamically determined. CMakeLists author is responsible
+	  for setting appropriate version if fails
+
+	### Additional configuration options
+
+	`TMP_FOLDER` [Default: `${CMAKE_CURRENT_BINARY_DIR}/tmp`]
+	  Temporary path to store `DynamicVersion`'s temporary files
+
+	`OUTPUT_FOLDER` [Default: `${CMAKE_CURRENT_BINARY_DIR}`]
+	  Path where to store generated files
+
+	## Targets
+	`${PROJECT_PREFIX}Version`
+	  Target that recalculates the dynamic version each time. See [](#Output-files) for using dependencies that only
+	  change when the actual commit/describe/version change.
+
+	`${PROJECT_PREFIX}GitHash`
+	  Target that recalculates the git hash each time.
+
+	## Output files
+	:::{note}
+	These files are updated only when the contents change. You can use them as dependencies for files generated from
+	<inv:cmake:cmake:command#command:configure_file>. See <inv:cmake:cmake:prop_sf#prop_sf:OBJECT_DEPENDS> for more
+	info on how to add file-level dependency
+	:::
+
+	`${OUTPUT_FOLDER}/.DynamicVersion.json`
+	  All computed data of `DynamicVersion`
+
+	`${OUTPUT_FOLDER}/.version`
+	  Computed version
+
+	`${OUTPUT_FOLDER}/.git_describe`
+	  Computed git describe
+
+	`${OUTPUT_FOLDER}/.git_commit`
+	  Current commit
+
+	## See also
+	- [pypa/setuptools_scm](https://github.com/pypa/setuptools_scm)
+
+	]===]
+
+	set(ARGS_Options
 			ALLOW_FAILS
-			)
-	list(APPEND ARGS_OneValue
+	)
+	set(ARGS_OneValue
 			PROJECT_PREFIX
 			OUTPUT_VERSION
 			OUTPUT_DESCRIBE
@@ -49,11 +130,13 @@ function(dynamic_version)
 			FALLBACK_HASH
 			TMP_FOLDER
 			OUTPUT_FOLDER
-			)
+	)
+	set(ARGS_MultiValue
+	)
 
-	cmake_parse_arguments(ARGS "${ARGS_Options}" "${ARGS_OneValue}" "${ARGS_MultiValue}" ${ARGN})
+	cmake_parse_arguments(PARSE_ARGV 0 ARGS "${ARGS_Options}" "${ARGS_OneValue}" "${ARGS_MultiValue}")
 
-	set(DynamicVersion_ARGS "")
+	set(DynamicVersion_ARGS)
 
 	# Set default values
 	if (NOT DEFINED ARGS_OUTPUT_VERSION)
@@ -188,33 +271,50 @@ function(dynamic_version)
 			)
 endfunction()
 
-function(get_dynamic_version)
-	# Compute the dynamic version
-	#
-	# Named arguments::
-	#   PROJECT_SOURCE (path): Location of the project source.
-	#     (either extracted git archive or git clone)
-	#   GIT_ARCHIVAL_FILE (path): Location of .git_archival.txt
-	#   FALLBACK_VERSION (string): Fallback version
-	#   FALLBACK_HASH (string): Fallback git hash. If not defined target GitHash will not be created if project is not a
-	#     git repo
-	#   TMP_FOLDER (path): Temporary path to store temporary files
 
-	set(ARGS_Options "")
-	set(ARGS_OneValue "")
-	set(ARGS_MultiValue "")
-	list(APPEND ARGS_OneValue
+#[==============================================================================================[
+#                                      Auxiliary interface                                      #
+]==============================================================================================]
+
+function(get_dynamic_version)
+	#[===[.md:
+	# get_dynamic_version
+
+	Internal function that is called to calculate the dynamic version. This function is called by the
+	`${PROJECT_PREFIX}DynamicVersion` targets generated by {command}`dynamic_version`.
+
+	In a nutshell, the `DynamicVersion.cmake` is executed with the variable `DynamicVersion_RUN` set to true.
+
+	## Synopsis
+	```cmake
+	  get_dynamic_version(PROJECT_SOURCE <path> GIT_ARCHIVAL_FILE <file>
+	  	TMP_FOLDER <path>
+	  	[FALLBACK_VERSION <version>] [FALLBACK_HASH <string>]
+	  )
+	```
+
+	## Options
+	See {command}`dynamic_version` for details
+
+	## See also
+	- [pypa/setuptools_scm](https://github.com/pypa/setuptools_scm)
+
+	]===]
+
+	set(ARGS_Options
+			ALLOW_FAILS
+	)
+	set(ARGS_OneValue
 			PROJECT_SOURCE
 			GIT_ARCHIVAL_FILE
 			FALLBACK_VERSION
 			FALLBACK_HASH
 			TMP_FOLDER
-			)
-	list(APPEND ARGS_Options
-			ALLOW_FAILS
-			)
+	)
+	set(ARGS_MultiValue
+	)
 
-	cmake_parse_arguments(ARGS "${ARGS_Options}" "${ARGS_OneValue}" "${ARGS_MultiValue}" ${ARGN})
+	cmake_parse_arguments(PARSE_ARGV 0 ARGS "${ARGS_Options}" "${ARGS_OneValue}" "${ARGS_MultiValue}")
 
 	if (DEFINED ARGS_FALLBACK_VERSION OR ARGS_ALLOW_FAILS)
 		# If we have a fallback version or it is specified it is ok if this fails, don't make messages FATAL_ERROR
@@ -336,6 +436,18 @@ function(get_dynamic_version)
 			"  data = ${data}")
 	file(WRITE ${ARGS_TMP_FOLDER}/.DynamicVersion.json ${data})
 endfunction()
+
+
+#[==============================================================================================[
+#                                       Private interface                                       #
+]==============================================================================================]
+
+# No private interface
+
+
+#[==============================================================================================[
+#                                             Misc                                             #
+]==============================================================================================]
 
 # Logic to run get_dynamic_version() by running this script
 if (DynamicVersion_RUN)
