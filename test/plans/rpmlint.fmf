@@ -1,23 +1,5 @@
-summary:
-  Perform rpmlint and rpminspect tests
-prepare:
-  - name: Get rpmlint packages
-    how: install
-    package:
-      - rpmlint
-      - rpminspect
-      - rpminspect-data-fedora
-      # For xargs
-      - findutils
-  # TODO: Disabled because srpm inspect fails on multi-release
-  #- name: Download the source rpm
-  #  how: shell
-  #  script: cd /tmp && curl -O ${PACKIT_SRPM_URL}
-  - name: Download rpm packages
-    how: shell
-    script: cd /tmp && dnf download ${PACKIT_COPR_RPMS}
-discover:
-  how: fmf
-  filter: "tag: rpmlint"
-execute:
-  how: tmt
+plan:
+  import:
+    url: https://github.com/LecrisUT/packit-tmt
+    ref: rpminspect
+    name: /plans/rpminspect
