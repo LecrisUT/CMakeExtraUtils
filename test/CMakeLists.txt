@@ -85,3 +85,9 @@ function(CMakeExtraUtils_add_test test)
 			LABELS "${ARGS_LABELS}"
 	)
 endfunction()
+
+foreach (test_type IN ITEMS
+		package
+)
+	add_subdirectory(${test_type})
+endforeach ()
