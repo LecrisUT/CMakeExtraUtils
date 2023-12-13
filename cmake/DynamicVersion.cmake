@@ -11,6 +11,7 @@ Helper module to get the project's version dynamically. Format is compatible wit
 ]===]
 
 include_guard()
+list(APPEND CMAKE_MESSAGE_CONTEXT DynamicVersion)
 
 #[==============================================================================================[
 #                                         Preparations                                         #
@@ -116,6 +117,7 @@ function(dynamic_version)
 
 	]===]
 
+	list(APPEND CMAKE_MESSAGE_CONTEXT dynamic_version)
 	set(ARGS_Options
 			ALLOW_FAILS
 	)
@@ -163,11 +165,13 @@ function(dynamic_version)
 	endif ()
 	if (NOT ARGS_PROJECT_PREFIX)
 		message(AUTHOR_WARNING
-				"DynamicVersion: No PROJECT_PREFIX was given. Please provide one to avoid target name clashes")
+				"No PROJECT_PREFIX was given. Please provide one to avoid target name clashes"
+		)
 	elseif (NOT ARGS_PROJECT_PREFIX MATCHES ".*_$")
 		# Append an underscore _ to the prefix if not provided
 		message(AUTHOR_WARNING
-				"DynamicVersion: PROJECT_PREFIX did not contain an underscore, please add it for clarity")
+				"PROJECT_PREFIX did not contain an underscore, please add it for clarity"
+		)
 		set(ARGS_PROJECT_PREFIX ${ARGS_PROJECT_PREFIX}_)
 	endif ()
 	if (NOT DEFINED ARGS_TMP_FOLDER)
@@ -178,14 +182,15 @@ function(dynamic_version)
 	endif ()
 	if (ARGS_OUTPUT_FOLDER EQUAL ARGS_TMP_FOLDER)
 		message(FATAL_ERROR
-				"DynamicVersion misconfigured: Cannot have both OUTPUT_FOLDER and TMP_FOLDER point to the same path")
+				"OUTPUT_FOLDER and TMP_FOLDER cannot point to the same path"
+		)
 	endif ()
 
 	list(APPEND DynamicVersion_ARGS
 			PROJECT_SOURCE ${ARGS_PROJECT_SOURCE}
 			GIT_ARCHIVAL_FILE ${ARGS_GIT_ARCHIVAL_FILE}
 			TMP_FOLDER ${ARGS_TMP_FOLDER}
-			)
+	)
 	if (DEFINED ARGS_FALLBACK_VERSION)
 		list(APPEND DynamicVersion_ARGS
 				FALLBACK_VERSION ${ARGS_FALLBACK_VERSION})
@@ -239,16 +244,16 @@ function(dynamic_version)
 				-DDynamicVersion_ARGS:STRING="${DynamicVersion_ARGS}"
 				-P ${CMAKE_CURRENT_FUNCTION_LIST_FILE}
 				COMMAND ${CMAKE_COMMAND} -E copy_if_different ${ARGS_TMP_FOLDER}/.DynamicVersion.json ${ARGS_OUTPUT_FOLDER}/.DynamicVersion.json
-				)
+		)
 		add_custom_target(${ARGS_PROJECT_PREFIX}Version ALL
 				DEPENDS ${ARGS_PROJECT_PREFIX}DynamicVersion
 				COMMAND ${CMAKE_COMMAND} -E copy_if_different ${ARGS_TMP_FOLDER}/.git_describe ${ARGS_OUTPUT_FOLDER}/.git_describe
 				COMMAND ${CMAKE_COMMAND} -E copy_if_different ${ARGS_TMP_FOLDER}/.version ${ARGS_OUTPUT_FOLDER}/.version
-				)
+		)
 		add_custom_target(${ARGS_PROJECT_PREFIX}GitHash
 				DEPENDS ${ARGS_PROJECT_PREFIX}DynamicVersion
 				COMMAND ${CMAKE_COMMAND} -E copy_if_different ${ARGS_TMP_FOLDER}/.git_commit ${ARGS_OUTPUT_FOLDER}/.git_commit
-				)
+		)
 	endif ()
 
 	# This ensures that the project is reconfigured (at least at second run) whenever the version changes
@@ -256,7 +261,8 @@ function(dynamic_version)
 			PROPERTY CMAKE_CONFIGURE_DEPENDS ${ARGS_OUTPUT_FOLDER}/.version)
 
 	message(VERBOSE
-			"DynamicVersion: Calculated version = ${${ARGS_OUTPUT_VERSION}}")
+			"Calculated version = ${${ARGS_OUTPUT_VERSION}}"
+	)
 
 	if (CMAKE_VERSION VERSION_LESS 3.25)
 		# TODO: Remove when cmake 3.25 is commonly distributed
@@ -268,7 +274,7 @@ function(dynamic_version)
 			${ARGS_OUTPUT_DESCRIBE}
 			${ARGS_OUTPUT_VERSION}
 			${ARGS_OUTPUT_COMMIT}
-			)
+	)
 endfunction()
 
 
@@ -301,6 +307,7 @@ function(get_dynamic_version)
 
 	]===]
 
+	list(APPEND CMAKE_MESSAGE_CONTEXT get_dynamic_version)
 	set(ARGS_Options
 			ALLOW_FAILS
 	)
@@ -351,8 +358,9 @@ function(get_dynamic_version)
 	if (NOT EXISTS ${ARGS_GIT_ARCHIVAL_FILE})
 		# If git_archival.txt is missing, project is ill-formed
 		message(${error_message_type}
-				"DynamicVersion: Missing file .git_archival.txt\n"
-				"  .git_archival.txt: ${ARGS_GIT_ARCHIVAL_FILE}")
+				"Missing file .git_archival.txt\n"
+				"  .git_archival.txt: ${ARGS_GIT_ARCHIVAL_FILE}"
+		)
 		return()
 	endif ()
 
@@ -362,8 +370,9 @@ function(get_dynamic_version)
 	if (NOT describe-name)
 		# If git_archival.txt does not contain the field "describe-name:", it is ill-formed
 		message(${error_message_type}
-				"DynamicVersion: Missing string \"describe-name\" in .git_archival.txt\n"
-				"  .git_archival.txt: ${ARGS_GIT_ARCHIVAL_FILE}")
+				"Missing string \"describe-name\" in .git_archival.txt\n"
+				"  .git_archival.txt: ${ARGS_GIT_ARCHIVAL_FILE}"
+		)
 		return()
 	endif ()
 
@@ -383,7 +392,9 @@ function(get_dynamic_version)
 		string(JSON data SET
 				${data} commit \"${CMAKE_MATCH_1}\")
 		file(WRITE ${ARGS_TMP_FOLDER}/.git_commit ${CMAKE_MATCH_1})
-		message(DEBUG "DynamicVersion: Found appropriate tag in .git_archival.txt file")
+		message(DEBUG
+				"Found appropriate tag in .git_archival.txt file"
+		)
 	else ()
 		# If not it has to be computed from the git archive
 		find_package(Git REQUIRED)
@@ -394,8 +405,9 @@ function(get_dynamic_version)
 				OUTPUT_QUIET)
 		if (NOT git_status_result EQUAL 0)
 			message(${error_message_type}
-					"DynamicVersion: Project source is neither a git repository nor a git archive:\n"
-					"  Source: ${ARGS_PROJECT_SOURCE}")
+					"Project source is neither a git repository nor a git archive:\n"
+					"  Source: ${ARGS_PROJECT_SOURCE}"
+			)
 			return()
 		endif ()
 		# Get most recent commit hash
@@ -413,8 +425,9 @@ function(get_dynamic_version)
 		# Match any part containing digits and periods (strips out rc and so on)
 		if (NOT describe-name MATCHES "^([v]?([0-9\\.]+).*)")
 			message(${error_message_type}
-					"DynamicVersion: Version tag is ill-formatted\n"
-					"  Describe-name: ${describe-name}")
+					"Version tag is ill-formatted\n"
+					"  Describe-name: ${describe-name}"
+			)
 			return()
 		endif ()
 		string(JSON data SET
@@ -426,14 +439,17 @@ function(get_dynamic_version)
 		string(JSON data SET
 				${data} commit \"${git-hash}\")
 		file(WRITE ${ARGS_TMP_FOLDER}/.git_commit ${git-hash})
-		message(DEBUG "DynamicVersion: Found appropriate tag from git")
+		message(DEBUG
+				"Found appropriate tag from git"
+		)
 	endif ()
 
 	# Mark success and output results
 	string(JSON data SET ${data} failed false)
 	message(DEBUG
-			"DynamicVersion: Computed data:\n"
-			"  data = ${data}")
+			"Computed data:\n"
+			"  data = ${data}"
+	)
 	file(WRITE ${ARGS_TMP_FOLDER}/.DynamicVersion.json ${data})
 endfunction()
 
@@ -453,7 +469,8 @@ endfunction()
 if (DynamicVersion_RUN)
 	if (NOT DEFINED DynamicVersion_ARGS)
 		message(FATAL_ERROR
-				"DynamicVersion: DynamicVersion_ARGS not defined")
+				"DynamicVersion_ARGS not defined"
+		)
 	endif ()
 	get_dynamic_version(${DynamicVersion_ARGS})
 endif ()

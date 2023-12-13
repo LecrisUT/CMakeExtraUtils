@@ -6,6 +6,9 @@
 #
 #
 
+list(APPEND CMAKE_MESSAGE_CONTEXT PackageComps)
+
+# TODO: Move these to functions with minimal macro that actually does the `include()`
 macro(get_component _comp)
 	# Import a specific package component
 	#
@@ -19,26 +22,27 @@ macro(get_component _comp)
 	#   PRINT: Print results when loading each component
 	#   CHECK_REQUIRED: Check if component is required and not present
 
+	list(APPEND CMAKE_MESSAGE_CONTEXT get_component)
 	set(ARGS_Options "")
 	set(ARGS_OneValue "")
 	set(ARGS_MultiValue "")
 	list(APPEND ARGS_Options
 			PRINT
 			CHECK_REQUIRED
-			)
+	)
 	list(APPEND ARGS_OneValue
 			PACKAGE
 			LIB_PREFIX
 			FALLBACK_PREFIX
-			)
+	)
 
 	cmake_parse_arguments(ARGS "${ARGS_Options}" "${ARGS_OneValue}" "${ARGS_MultiValue}" ${ARGN})
 
 
 	if (NOT DEFINED ARGS_PACKAGE)
 		message(AUTHOR_WARNING
-				"CMakeExtraUtils::PackageComps:\n"
-				"  PACKAGE not passed to get_comp")
+				"PACKAGE not passed to get_comp"
+		)
 		set(ARGS_PACKAGE "${CMAKE_FIND_PACKAGE_NAME}")
 	endif ()
 	if (ARGS_PRINT)
@@ -48,20 +52,20 @@ macro(get_component _comp)
 	endif ()
 
 	message(${stdout_type}
-			"CMakeExtraUtils::PackageComps:\n"
-			"  Trying to include component: ${_comp}")
+			"Trying to include component: ${_comp}"
+	)
 
 	message(DEBUG
-			"CMakeExtraUtils::PackageComps:\n"
-			"  Passed arguments:\n"
-			"  PACKAGE = ${ARGS_PACKAGE}\n"
-			"  _comp = ${_comp}\n"
-			"  LIB_PREFIX = ${ARGS_LIB_PREFIX}\n"
-			"  FALLBACK_PREFIX = ${ARGS_FALLBACK_PREFIX}\n"
-			"  PRINT = ${ARGS_PRINT}\n"
-			"  CHECK_REQUIRED = ${ARGS_CHECK_REQUIRED}\n"
-			"  ${ARGS_PACKAGE}_FIND_REQUIRED_${_comp} = ${${ARGS_PACKAGE}_FIND_REQUIRED_${_comp}}\n"
-			"  ${ARGS_PACKAGE}_${_comp}_SharedStatic = ${${ARGS_PACKAGE}_${_comp}_SharedStatic}")
+			"Passed arguments:\n"
+			"PACKAGE = ${ARGS_PACKAGE}\n"
+			"_comp = ${_comp}\n"
+			"LIB_PREFIX = ${ARGS_LIB_PREFIX}\n"
+			"FALLBACK_PREFIX = ${ARGS_FALLBACK_PREFIX}\n"
+			"PRINT = ${ARGS_PRINT}\n"
+			"CHECK_REQUIRED = ${ARGS_CHECK_REQUIRED}\n"
+			"${ARGS_PACKAGE}_FIND_REQUIRED_${_comp} = ${${ARGS_PACKAGE}_FIND_REQUIRED_${_comp}}\n"
+			"${ARGS_PACKAGE}_${_comp}_SharedStatic = ${${ARGS_PACKAGE}_${_comp}_SharedStatic}"
+	)
 
 	# Set default component to not found
 	set(${ARGS_PACKAGE}_${_comp}_FOUND FALSE)
@@ -69,22 +73,22 @@ macro(get_component _comp)
 	if (DEFINED ARGS_LIB_PREFIX)
 		# We may have shared/static components
 		message(DEBUG
-				"CMakeExtraUtils::PackageComps:\n"
-				"  Including ${_comp} with possible shared/static:")
+				"Including ${_comp} with possible shared/static:"
+		)
 
 		if (${ARGS_PACKAGE}_${_comp}_SharedStatic)
 			# If we know it is a shared/static target parse it appropriately
 			message(DEBUG
-					"CMakeExtraUtils::PackageComps:\n"
-					"  ${_comp} has to have shared/static library:")
+					"${_comp} has to have shared/static library:"
+			)
 
 			# Try to load shared/static library
 			if (EXISTS ${CMAKE_CURRENT_LIST_DIR}/${ARGS_PACKAGE}Targets_${_comp}_${ARGS_LIB_PREFIX}.cmake)
 				# Load the correct library
 				include(${CMAKE_CURRENT_LIST_DIR}/${ARGS_PACKAGE}Targets_${_comp}_${ARGS_LIB_PREFIX}.cmake)
 				message(DEBUG
-						"CMakeExtraUtils::PackageComps:\n"
-						"  Including ${ARGS_PACKAGE}Targets_${_comp}_${ARGS_LIB_PREFIX}.cmake: ${${ARGS_PACKAGE}_FOUND}")
+						"Including ${ARGS_PACKAGE}Targets_${_comp}_${ARGS_LIB_PREFIX}.cmake: ${${ARGS_PACKAGE}_FOUND}"
+				)
 				# Check if include was successful
 				if (${ARGS_PACKAGE}_FOUND)
 					set(${ARGS_PACKAGE}_${_comp}_FOUND TRUE)
@@ -92,8 +96,8 @@ macro(get_component _comp)
 				else ()
 					set(${ARGS_PACKAGE}_${_comp}_FOUND FALSE)
 					message(${stdout_type}
-							"CMakeExtraUtils::PackageComps:\n"
-							"  Could not load component ${_comp} of type ${ARGS_LIB_PREFIX}")
+							"Could not load component ${_comp} of type ${ARGS_LIB_PREFIX}"
+					)
 					return()
 				endif ()
 			elseif (ARGS_FALLBACK_PREFIX)
@@ -101,8 +105,8 @@ macro(get_component _comp)
 				include(${CMAKE_CURRENT_LIST_DIR}/${ARGS_PACKAGE}Targets_${_comp}_${ARGS_FALLBACK_PREFIX}.cmake OPTIONAL
 						RESULT_VARIABLE ${ARGS_PACKAGE}_${_comp}_FOUND)
 				message(DEBUG
-						"CMakeExtraUtils::PackageComps:\n"
-						"  Including ${ARGS_PACKAGE}Targets_${_comp}_${ARGS_FALLBACK_PREFIX}.cmake: ${${ARGS_PACKAGE}_${_comp}_FOUND}")
+						"Including ${ARGS_PACKAGE}Targets_${_comp}_${ARGS_FALLBACK_PREFIX}.cmake: ${${ARGS_PACKAGE}_${_comp}_FOUND}"
+				)
 				# Reformat Comp_FOUND variable to TRUE/FALSE and check if include was successful
 				if (${ARGS_PACKAGE}_${_comp}_FOUND AND ${ARGS_PACKAGE}_FOUND)
 					set(${ARGS_PACKAGE}_${_comp}_FOUND TRUE)
@@ -110,28 +114,28 @@ macro(get_component _comp)
 				else ()
 					set(${ARGS_PACKAGE}_${_comp}_FOUND FALSE)
 					message(${stdout_type}
-							"CMakeExtraUtils::PackageComps:\n"
-							"  Could not find component ${_comp} of type ${ARGS_LIB_PREFIX}")
+							"Could not find component ${_comp} of type ${ARGS_LIB_PREFIX}"
+					)
 					return()
 				endif ()
 			else ()
 				set(${ARGS_PACKAGE}_${_comp}_FOUND FALSE)
 				message(${stdout_type}
-						"CMakeExtraUtils::PackageComps:\n"
-						"  Could not load component ${_comp} of either type ${ARGS_LIB_PREFIX} or ${ARGS_FALLBACK_PREFIX}")
+						"Could not load component ${_comp} of either type ${ARGS_LIB_PREFIX} or ${ARGS_FALLBACK_PREFIX}"
+				)
 				return()
 			endif ()
 		elseif (NOT DEFINED ${ARGS_PACKAGE}_${_comp}_SharedStatic)
 			# If we don't know what type of target it is try to load shared/static
 			message(DEBUG
-					"CMakeExtraUtils::PackageComps:\n"
-					"  ${_comp} is of unknown type. Trying to find shared/static:")
+					"${_comp} is of unknown type. Trying to find shared/static:"
+			)
 			if (EXISTS ${CMAKE_CURRENT_LIST_DIR}/${ARGS_PACKAGE}Targets_${_comp}_${ARGS_LIB_PREFIX}.cmake)
 				# Load the correct library
 				include(${CMAKE_CURRENT_LIST_DIR}/${ARGS_PACKAGE}Targets_${_comp}_${ARGS_LIB_PREFIX}.cmake)
 				message(DEBUG
-						"CMakeExtraUtils::PackageComps:\n"
-						"  Including ${ARGS_PACKAGE}Targets_${_comp}_${ARGS_LIB_PREFIX}.cmake: ${${ARGS_PACKAGE}_FOUND}")
+						"Including ${ARGS_PACKAGE}Targets_${_comp}_${ARGS_LIB_PREFIX}.cmake: ${${ARGS_PACKAGE}_FOUND}"
+				)
 				# Check if include was successful
 				if (${ARGS_PACKAGE}_FOUND)
 					set(${ARGS_PACKAGE}_${_comp}_FOUND TRUE)
@@ -140,8 +144,8 @@ macro(get_component _comp)
 					set(${ARGS_PACKAGE}_${_comp}_FOUND FALSE)
 					# Return because we know it is a shared/static component from the presence of the file
 					message(${stdout_type}
-							"CMakeExtraUtils::PackageComps:\n"
-							"  Could not load component ${_comp} of type ${ARGS_LIB_PREFIX}")
+							"Could not load component ${_comp} of type ${ARGS_LIB_PREFIX}"
+					)
 					return()
 				endif ()
 			elseif (ARGS_FALLBACK_PREFIX)
@@ -149,8 +153,8 @@ macro(get_component _comp)
 				include(${CMAKE_CURRENT_LIST_DIR}/${ARGS_PACKAGE}Targets_${_comp}_${ARGS_FALLBACK_PREFIX}.cmake OPTIONAL
 						RESULT_VARIABLE ${ARGS_PACKAGE}_${_comp}_FOUND)
 				message(DEBUG
-						"CMakeExtraUtils::PackageComps:\n"
-						"  Including ${ARGS_PACKAGE}Targets_${_comp}_${ARGS_FALLBACK_PREFIX}.cmake: ${${ARGS_PACKAGE}_${_comp}_FOUND}")
+						"Including ${ARGS_PACKAGE}Targets_${_comp}_${ARGS_FALLBACK_PREFIX}.cmake: ${${ARGS_PACKAGE}_${_comp}_FOUND}"
+				)
 				# Reformat Comp_FOUND variable to TRUE/FALSE and check if include was successful
 				if (${ARGS_PACKAGE}_${_comp}_FOUND AND ${ARGS_PACKAGE}_FOUND)
 					set(${ARGS_PACKAGE}_${_comp}_FOUND TRUE)
@@ -159,8 +163,8 @@ macro(get_component _comp)
 					# File was present, but failed to load
 					set(${ARGS_PACKAGE}_${_comp}_FOUND FALSE)
 					message(${stdout_type}
-							"CMakeExtraUtils::PackageComps:\n"
-							"  Could not load component ${_comp} of type ${ARGS_FALLBACK_PREFIX}")
+							"Could not load component ${_comp} of type ${ARGS_FALLBACK_PREFIX}"
+					)
 					return()
 				else ()
 					unset(${ARGS_PACKAGE}_${_comp}_FOUND FALSE)
@@ -174,31 +178,31 @@ macro(get_component _comp)
 			include(${CMAKE_CURRENT_LIST_DIR}/${ARGS_PACKAGE}Targets_${_comp}.cmake OPTIONAL
 					RESULT_VARIABLE ${ARGS_PACKAGE}_${_comp}_FOUND)
 			message(DEBUG
-					"CMakeExtraUtils::PackageComps:\n"
-					"  Including ${ARGS_PACKAGE}Targets_${_comp}.cmake: ${${ARGS_PACKAGE}_${_comp}_FOUND}")
+					"Including ${ARGS_PACKAGE}Targets_${_comp}.cmake: ${${ARGS_PACKAGE}_${_comp}_FOUND}"
+			)
 			# Reformat Comp_FOUND variable to TRUE/FALSE and check if include was successful
 			if (${ARGS_PACKAGE}_${_comp}_FOUND AND ${ARGS_PACKAGE}_FOUND)
 				set(${ARGS_PACKAGE}_${_comp}_FOUND TRUE)
 			else ()
 				set(${ARGS_PACKAGE}_${_comp}_FOUND FALSE)
 				message(${stdout_type}
-						"CMakeExtraUtils::PackageComps:\n"
-						"  Could not load component ${_comp}")
+						"Could not load component ${_comp}"
+				)
 				return()
 			endif ()
 		else ()
 			# Otherwise still try to parse the non shared/static library
 			message(DEBUG
-					"CMakeExtraUtils::PackageComps:\n"
-					"Trying to include ${ARGS_PACKAGE}Targets_${_comp}.cmake (${ARGS_PACKAGE}_${_comp}_FOUND=${${ARGS_PACKAGE}_${_comp}_FOUND})")
+					"Trying to include ${ARGS_PACKAGE}Targets_${_comp}.cmake (${ARGS_PACKAGE}_${_comp}_FOUND=${${ARGS_PACKAGE}_${_comp}_FOUND})"
+			)
 			if (DEFINED ${ARGS_PACKAGE}_${_comp}_SharedStatic)
 				# We know it is a static/shared library, only fail if the include has failed, not if it doesn't exist
 				include(${CMAKE_CURRENT_LIST_DIR}/${ARGS_PACKAGE}Targets_${_comp}.cmake OPTIONAL)
 				if (NOT ${ARGS_PACKAGE}_FOUND)
 					set(${ARGS_PACKAGE}_${_comp}_FOUND FALSE)
 					message(${stdout_type}
-							"CMakeExtraUtils::PackageComps:\n"
-							"  Could not load component ${_comp}")
+							"Could not load component ${_comp}"
+					)
 					return()
 				endif ()
 			else ()
@@ -206,10 +210,10 @@ macro(get_component _comp)
 				include(${CMAKE_CURRENT_LIST_DIR}/${ARGS_PACKAGE}Targets_${_comp}.cmake OPTIONAL
 						RESULT_VARIABLE _temp_flag)
 				message(DEBUG
-						"CMakeExtraUtils::PackageComps:\n"
-						"  Include result:\n"
-						"  _temp_flag=${_temp_flag}\n"
-						"   ${ARGS_PACKAGE}_${_comp}_FOUND = ${${ARGS_PACKAGE}_${_comp}_FOUND}")
+						"Include result:\n"
+						"_temp_flag=${_temp_flag}\n"
+						"${ARGS_PACKAGE}_${_comp}_FOUND = ${${ARGS_PACKAGE}_${_comp}_FOUND}"
+				)
 
 				# Check if either it was static/shared or arbitrary component
 				if ((${ARGS_PACKAGE}_${_comp}_FOUND OR _temp_flag) AND ${ARGS_PACKAGE}_FOUND)
@@ -217,8 +221,8 @@ macro(get_component _comp)
 				else ()
 					set(${ARGS_PACKAGE}_${_comp}_FOUND FALSE)
 					message(${stdout_type}
-							"CMakeExtraUtils::PackageComps:\n"
-							"  Could not load component ${_comp}")
+							"Could not load component ${_comp}"
+					)
 					return()
 				endif ()
 			endif ()
@@ -226,8 +230,8 @@ macro(get_component _comp)
 	else ()
 		# We do not have shared/static components
 		message(DEBUG
-				"CMakeExtraUtils::PackageComps:\n"
-				"  Including ${_comp} without shared/static:")
+				"Including ${_comp} without shared/static:"
+		)
 		# Check if required component is installed
 		include(${CMAKE_CURRENT_LIST_DIR}/${ARGS_PACKAGE}Targets_${_comp}.cmake OPTIONAL
 				RESULT_VARIABLE ${ARGS_PACKAGE}_${_comp}_FOUND)
@@ -237,15 +241,15 @@ macro(get_component _comp)
 		else ()
 			set(${ARGS_PACKAGE}_${_comp}_FOUND FALSE)
 			message(${stdout_type}
-					"CMakeExtraUtils::PackageComps:\n"
-					"  Could not load component ${_comp}")
+					"Could not load component ${_comp}"
+			)
 			return()
 		endif ()
 	endif ()
 
 	message(${stdout_type}
-			"CMakeExtraUtils::PackageComps:\n"
-			"  Found component ${_comp} ${${ARGS_PACKAGE}_${_comp}_LIB_TYPE}")
+			"Found component ${_comp} ${${ARGS_PACKAGE}_${_comp}_LIB_TYPE}"
+	)
 endmacro()
 
 macro(find_components)
@@ -274,6 +278,7 @@ macro(find_components)
 	# For a reference to the find_package variables check:
 	# https://cmake.org/cmake/help/latest/command/find_package.html#package-file-interface-variables
 
+	list(APPEND CMAKE_MESSAGE_CONTEXT find_components)
 	set(ARGS_Options "")
 	set(ARGS_OneValue "")
 	set(ARGS_MultiValue "")
@@ -282,11 +287,11 @@ macro(find_components)
 			LOAD_ALL_DEFAULT
 			HAVE_GLOBAL
 			HAVE_GLOBAL_SHARED_STATIC
-			)
+	)
 	list(APPEND ARGS_MultiValue
 			COMPONENTS
 			DEPRECATED_COMPONENTS
-			)
+	)
 
 	cmake_parse_arguments(ARGS "${ARGS_Options}" "${ARGS_OneValue}" "${ARGS_MultiValue}" ${ARGN})
 
@@ -313,36 +318,36 @@ macro(find_components)
 	set(${ARGS_PACKAGE}_FOUND TRUE)
 
 	message(${stdout_type}
-			"CMakeExtraUtils::PackageComps:\n"
-			"  Looking for package components of ${ARGS_PACKAGE}")
+			"Looking for package components of ${ARGS_PACKAGE}"
+	)
 	message(DEBUG
-			"CMakeExtraUtils::PackageComps:\n"
-			"  Passed arguments:\n"
-			"  PACKAGE = ${ARGS_PACKAGE}\n"
-			"  COMPONENTS = ${ARGS_COMPONENTS}\n"
-			"  DEPRECATED_COMPONENTS = ${ARGS_DEPRECATED_COMPONENTS}\n"
-			"  LOAD_ALL_DEFAULT = ${ARGS_LOAD_ALL_DEFAULT}\n"
-			"  HAVE_GLOBAL = ${ARGS_HAVE_GLOBAL}\n"
-			"  HAVE_GLOBAL_SHARED_STATIC = ${ARGS_HAVE_GLOBAL_SHARED_STATIC}\n"
-			"  ${ARGS_PACKAGE}_FIND_COMPONENTS = ${${ARGS_PACKAGE}_FIND_COMPONENTS}")
+			"Passed arguments:\n"
+			"PACKAGE = ${ARGS_PACKAGE}\n"
+			"COMPONENTS = ${ARGS_COMPONENTS}\n"
+			"DEPRECATED_COMPONENTS = ${ARGS_DEPRECATED_COMPONENTS}\n"
+			"LOAD_ALL_DEFAULT = ${ARGS_LOAD_ALL_DEFAULT}\n"
+			"HAVE_GLOBAL = ${ARGS_HAVE_GLOBAL}\n"
+			"HAVE_GLOBAL_SHARED_STATIC = ${ARGS_HAVE_GLOBAL_SHARED_STATIC}\n"
+			"${ARGS_PACKAGE}_FIND_COMPONENTS = ${${ARGS_PACKAGE}_FIND_COMPONENTS}"
+	)
 	file(GLOB _cmake_target_files RELATIVE ${CMAKE_CURRENT_LIST_DIR} ${CMAKE_CURRENT_LIST_DIR}/*)
 	message(DEBUG
-			"CMakeExtraUtils::PackageComps: Package files\n"
-			"  CMAKE_CURRENT_LIST_DIR = ${CMAKE_CURRENT_LIST_DIR}\n"
-			"  Files: ${_cmake_target_files}")
+			"CMAKE_CURRENT_LIST_DIR = ${CMAKE_CURRENT_LIST_DIR}\n"
+			"Files: ${_cmake_target_files}"
+	)
 
 	if (NOT DEFINED ARGS_COMPONENTS)
 		# End early if no component logic is defined
 		if (NOT EXISTS ${CMAKE_CURRENT_LIST_DIR}/${ARGS_PACKAGE}Targets.cmake)
 			message(WARNING
-					"CMakeExtraUtils::PackageComps: (Report to package distributor)\n"
-					"  No ${ARGS_PACKAGE}Targets.cmake file bundled.")
+					"No ${ARGS_PACKAGE}Targets.cmake file bundled. (Report to package distributor of ${ARGS_PACKAGE})"
+			)
 			set(${ARGS_PACKAGE}_FOUND FALSE)
 		else ()
 			include(${CMAKE_CURRENT_LIST_DIR}/${ARGS_PACKAGE}Targets.cmake)
 			message(${stdout_type}
-					"CMakeExtraUtils::PackageComps:\n"
-					"  Found package: ${ARGS_PACKAGE} -> ${${ARGS_PACKAGE}_FOUND}")
+					"Found package: ${ARGS_PACKAGE} -> ${${ARGS_PACKAGE}_FOUND}"
+			)
 		endif ()
 		return()
 	else ()
@@ -353,9 +358,9 @@ macro(find_components)
 			set(_with_shared_static FALSE)
 		else ()
 			message(FATAL_ERROR
-					"CMakeExtraUtils::PackageComps:\n"
-					"  COMPONENTS list is incompatible\n"
-					"  Please include both `static` and `shared` components")
+					"COMPONENTS list is incompatible\n"
+					"Please include both `static` and `shared` components"
+			)
 			set(${ARGS_PACKAGE}_FOUND FALSE)
 			return()
 		endif ()
@@ -385,17 +390,17 @@ macro(find_components)
 					set(extra_msg "Importing ${comp} has now no effect")
 				endif ()
 				message(DEPRECATION
-						"CMakeExtraUtils::PackageComps:\n"
-						"  Trying to import deprecated component of package: ${ARGS_PACKAGE}\n"
-						"  Deprecated component: ${comp}\n"
-						"  ${extra_msg}")
+						"Trying to import deprecated component of package: ${ARGS_PACKAGE}\n"
+						"Deprecated component: ${comp}\n"
+						"${extra_msg}"
+				)
 				list(REMOVE_ITEM ${ARGS_PACKAGE}_FIND_COMPONENTS ${comp})
 			else ()
 				message(WARNING
-						"CMakeExtraUtils::PackageComps:\n"
-						"  Failed to load package: ${ARGS_PACKAGE}\n"
-						"  Trying to import unknown component of package: ${ARGS_PACKAGE}\n"
-						"  Unsupported component: ${comp}")
+						"Failed to load package: ${ARGS_PACKAGE}\n"
+						"Trying to import unknown component of package: ${ARGS_PACKAGE}\n"
+						"Unsupported component: ${comp}"
+				)
 				set(${ARGS_PACKAGE}_FOUND FALSE)
 				return()
 			endif ()
@@ -407,9 +412,9 @@ macro(find_components)
 		# Error if both shared and static components are requested
 		if ("shared" IN_LIST ${ARGS_PACKAGE}_FIND_COMPONENTS AND "static" IN_LIST ${ARGS_PACKAGE}_FIND_COMPONENTS)
 			message(WARNING
-					"CMakeExtraUtils::PackageComps:\n"
-					"  Failed to load package: ${ARGS_PACKAGE}\n"
-					"  Cannot load both `shared` and `static` components at the same time. Select only one of those two")
+					"Failed to load package: ${ARGS_PACKAGE}\n"
+					"Cannot load both `shared` and `static` components at the same time. Select only one of those two"
+			)
 			set(${ARGS_PACKAGE}_FOUND FALSE)
 			return()
 		endif ()
@@ -443,35 +448,35 @@ macro(find_components)
 	endif ()
 
 	message(DEBUG
-			"CMakeExtraUtils::PackageComps:\n"
-			"  _with_shared_static = ${_with_shared_static}\n"
-			"  _libPrefix = ${_libPrefix}\n"
-			"  _fallbackPrefix = ${_fallbackPrefix}\n"
-			"  sub_func_ARGS = ${sub_func_ARGS}")
+			"_with_shared_static = ${_with_shared_static}\n"
+			"_libPrefix = ${_libPrefix}\n"
+			"_fallbackPrefix = ${_fallbackPrefix}\n"
+			"sub_func_ARGS = ${sub_func_ARGS}"
+	)
 
 	# Parse global targets
 	# Note: These have to be parsed before components in case components depend on it.
 	#       Global targets should not have component dependencies
 	if (ARGS_HAVE_GLOBAL)
 		message(VERBOSE
-				"CMakeExtraUtils::PackageComps:\n"
-				"  Trying to include ${ARGS_PACKAGE}Targets.cmake")
+				"Trying to include ${ARGS_PACKAGE}Targets.cmake"
+		)
 		if (EXISTS ${CMAKE_CURRENT_LIST_DIR}/${ARGS_PACKAGE}Targets.cmake)
 			include(${CMAKE_CURRENT_LIST_DIR}/${ARGS_PACKAGE}Targets.cmake)
 			if (NOT ${ARGS_PACKAGE}_FOUND)
 				# Check if include was successful
 				message(WARNING
-						"CMakeExtraUtils::PackageComps:\n"
-						"  Failed to load package: ${ARGS_PACKAGE}\n"
-						"  Could not load file: ${ARGS_PACKAGE}Targets.cmake")
+						"Failed to load package: ${ARGS_PACKAGE}\n"
+						"Could not load file: ${ARGS_PACKAGE}Targets.cmake"
+				)
 				set(${ARGS_PACKAGE}_FOUND FALSE)
 				return()
 			endif ()
 		else ()
 			message(WARNING
-					"CMakeExtraUtils::PackageComps: (Report to package distributor)\n"
-					"  Failed to load package: ${ARGS_PACKAGE}\n"
-					"  Missing file: ${ARGS_PACKAGE}Targets.cmake")
+					"Failed to load package: ${ARGS_PACKAGE}\n"
+					"Missing file: ${ARGS_PACKAGE}Targets.cmake (Report to package distributor of ${ARGS_PACKAGE})"
+			)
 			set(${ARGS_PACKAGE}_FOUND FALSE)
 			return()
 		endif ()
@@ -480,8 +485,8 @@ macro(find_components)
 	# Parse global static/shared targets
 	if (_with_shared_static AND ARGS_HAVE_GLOBAL_SHARED_STATIC)
 		message(VERBOSE
-				"CMakeExtraUtils::PackageComps:\n"
-				"  Trying to include ${ARGS_PACKAGE}Targets_${_libPrefix}.cmake (or ${_fallbackPrefix})")
+				"Trying to include ${ARGS_PACKAGE}Targets_${_libPrefix}.cmake (or ${_fallbackPrefix})"
+		)
 		if (EXISTS ${CMAKE_CURRENT_LIST_DIR}/${ARGS_PACKAGE}Targets_${_libPrefix}.cmake)
 			include(${CMAKE_CURRENT_LIST_DIR}/${ARGS_PACKAGE}Targets_${_libPrefix}.cmake)
 			set(${ARGS_PACKAGE}_LIB_TYPE ${_libPrefix})
@@ -490,19 +495,19 @@ macro(find_components)
 			set(${ARGS_PACKAGE}_LIB_TYPE ${_fallbackPrefix})
 		else ()
 			message(WARNING
-					"CMakeExtraUtils::PackageComps:\n"
-					"  Failed to load package: ${ARGS_PACKAGE}\n"
-					"  Could not load static/shared component: ${_libPrefix}\n"
-					"  Missing file: ${ARGS_PACKAGE}Targets_${_libPrefix}.cmake")
+					"Failed to load package: ${ARGS_PACKAGE}\n"
+					"Could not load static/shared component: ${_libPrefix}\n"
+					"Missing file: ${ARGS_PACKAGE}Targets_${_libPrefix}.cmake"
+			)
 			set(${ARGS_PACKAGE}_FOUND FALSE)
 			return()
 		endif ()
 		if (NOT ${ARGS_PACKAGE}_FOUND)
 			# Check if include was successful
 			message(WARNING
-					"CMakeExtraUtils::PackageComps:\n"
-					"  Failed to load package: ${ARGS_PACKAGE}\n"
-					"  Could not load file: ${ARGS_PACKAGE}Targets_${${ARGS_PACKAGE}_LIB_TYPE}.cmake")
+					"Failed to load package: ${ARGS_PACKAGE}\n"
+					"Could not load file: ${ARGS_PACKAGE}Targets_${${ARGS_PACKAGE}_LIB_TYPE}.cmake"
+			)
 			set(${ARGS_PACKAGE}_FOUND FALSE)
 			return()
 		endif ()
@@ -512,17 +517,17 @@ macro(find_components)
 	if (${ARGS_PACKAGE}_FIND_COMPONENTS)
 		# If specific components are passed handle only these components
 		message(VERBOSE
-				"CMakeExtraUtils::PackageComps:\n"
-				"  Trying to search for specific components: ${${ARGS_PACKAGE}_FIND_COMPONENTS}")
+				"Trying to search for specific components: ${${ARGS_PACKAGE}_FIND_COMPONENTS}"
+		)
 		foreach (comp IN LISTS ${ARGS_PACKAGE}_FIND_COMPONENTS)
 			# Should make sure <PACKAGE>_FOUND is always true to know if component is found or not
 			set(${ARGS_PACKAGE}_FOUND TRUE)
 			get_component(${comp} CHECK_REQUIRED ${sub_func_ARGS})
 			if (${ARGS_PACKAGE}_FIND_REQUIRED_${comp} AND NOT ${ARGS_PACKAGE}_${comp}_FOUND)
 				message(DEBUG
-						"CMakeExtraUtils::PackageComps:\n"
-						"  Failed to load package: ${ARGS_PACKAGE}\n"
-						"  Could not load component: ${comp}")
+						"Failed to load package: ${ARGS_PACKAGE}\n"
+						"Could not load component: ${comp}"
+				)
 				set(${ARGS_PACKAGE}_FOUND FALSE)
 				return()
 			endif ()
@@ -533,8 +538,8 @@ macro(find_components)
 		# If no components are passed and ${_load_all_default} is true, get all supported components
 		list(REMOVE_ITEM ARGS_COMPONENTS "static" "shared")
 		message(VERBOSE
-				"CMakeExtraUtils::PackageComps:\n"
-				"  Trying to search for all components: ${ARGS_COMPONENTS}")
+				"Trying to search for all components: ${ARGS_COMPONENTS}"
+		)
 		foreach (comp IN LISTS ARGS_COMPONENTS)
 			# Should make sure <PACKAGE>_FOUND is always true to know if component is found or not
 			set(${ARGS_PACKAGE}_FOUND TRUE)
@@ -550,8 +555,8 @@ macro(find_components)
 
 	# Final print status
 	message(${stdout_type}
-			"CMakeExtraUtils::PackageComps:\n"
-			"  Found package: ${ARGS_PACKAGE}")
+			"Found package: ${ARGS_PACKAGE}"
+	)
 endmacro()
 
 function(export_component)
@@ -565,18 +570,19 @@ function(export_component)
 	#   COMPONENT (string): Package component
 	#   LIB_TYPE (string) : Whether the target is shared/static or general
 
+	list(APPEND CMAKE_MESSAGE_CONTEXT export_component)
 	set(ARGS_Options "")
 	set(ARGS_OneValue "")
 	set(ARGS_MultiValue "")
 	list(APPEND ARGS_Options
 			PRINT
-			)
+	)
 	list(APPEND ARGS_OneValue
 			PROJECT
 			TARGET
 			COMPONENT
 			LIB_TYPE
-			)
+	)
 	set(LIB_TYPE_Choices "")
 	list(APPEND LIB_TYPE_Choices static shared)
 
@@ -641,7 +647,8 @@ function(export_component)
 			NAMESPACE ${ARGS_PROJECT}::)
 
 	message(${stdout_type}
-			"PackageComps: Configured package component for export\n"
+			"Configured package component for export\n"
 			"  Target: ${Target}\n"
-			"  TargetFile: ${TargetFile}")
+			"  TargetFile: ${TargetFile}"
+	)
 endfunction()
