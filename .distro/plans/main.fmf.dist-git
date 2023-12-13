@@ -1,4 +1,4 @@
 discover:
   how: fmf
   dist-git-source: true
-  path: test
+  dist-git-extract: CmakeExtraUtils-*/

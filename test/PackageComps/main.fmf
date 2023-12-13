@@ -1,8 +1,5 @@
-# Common test variables
-tag:
-  - PackageComps
-
-# Define tests
-/simple:
-  summary: Test simple PackageComps configuration
-  test: ./test_simple.sh
+tag: [ PackageComps ]
+summary: Test PackageComps module
+require+:
+  - gcc
+  - gcc-c++

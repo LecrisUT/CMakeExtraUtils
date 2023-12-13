@@ -6,15 +6,19 @@ files_to_sync:
   - .packit.yaml
   - src: .distro/cmake-extra-utils.rpmlintrc
     dest: cmake-extra-utils.rpmlintrc
-  - src: .fmf/
+  # tmt setup
+  - src: .distro/.fmf/
     dest: .fmf/
-  - src: test/plans/
+  - src: .distro/plans/
     dest: plans/
     filters:
       - "- test/plans/main.fmf.dist-git"
-      - "- test/plans/rpmlint.fmf"
-  - src: test/plans/main.fmf.dist-git
+      - "- rpminspect.fmf"
+      - "- rpmlint.fmf"
+  - src: .distro/plans/main.fmf.dist-git
     dest: plans/main.fmf
+  - src: .distro/tests/
+    dest: tests/
 
 upstream_package_name: CmakeExtraUtils
 downstream_package_name: cmake-extra-utils
@@ -25,7 +29,8 @@ jobs:
   - job: tests
     trigger: pull_request
     targets:
-      - fedora-development
+      - fedora-all
+    fmf_path: .distro
   - job: copr_build
     trigger: pull_request
     owner: lecris
@@ -33,23 +38,20 @@ jobs:
     update_release: true
     release_suffix: "{PACKIT_RPMSPEC_RELEASE}"
     targets:
-      - fedora-development
+      - fedora-all
   - job: tests
     trigger: commit
     branch: main
     targets:
-      - fedora-development
-      - fedora-latest
+      - fedora-all
+    fmf_path: .distro
   - job: copr_build
     trigger: commit
     branch: main
     owner: lecris
     project: nightly
     targets:
-      - fedora-development-x86_64
-      - fedora-latest-x86_64
-      - fedora-development-aarch64
-      - fedora-latest-aarch64
+      - fedora-all
     additional_repos:
       - copr://@scikit-build/release
   - job: copr_build
@@ -57,10 +59,7 @@ jobs:
     owner: lecris
     project: release
     targets:
-      - fedora-development-x86_64
-      - fedora-latest-x86_64
-      - fedora-development-aarch64
-      - fedora-latest-aarch64
+      - fedora-all
     additional_repos:
       - copr://@scikit-build/release
 ## TODO: Disabled until released on src.fedoraproject.org

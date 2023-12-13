@@ -1,0 +1,6 @@
+summary: Run the packaged tests
+discover+:
+  how: fmf
+  path: test
+execute:
+  how: tmt

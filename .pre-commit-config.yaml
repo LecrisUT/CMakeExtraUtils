@@ -10,6 +10,9 @@ repos:
     rev: 1.21.0
     hooks:
       - id: tmt-lint
+        # Temporarily disable linter since it does not accept root path
+        # https://github.com/teemtee/tmt/pull/2007
+        stages: [ manual ]
   - repo: https://github.com/executablebooks/mdformat
     rev: 0.7.16
     hooks:
