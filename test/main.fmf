@@ -1,2 +1,5 @@
 framework: beakerlib
 test: ./test.sh
+require:
+  - cmake
+  - rsync

@@ -1,5 +1,7 @@
-# Common test variables
 tag:
   - PackageComps
 
 summary: Test PackageComps module
+require+:
+  - gcc
+  - gcc-c++
