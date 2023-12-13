@@ -13,6 +13,8 @@ files_to_sync:
     dest: plans/
     filters:
       - "- test/plans/main.fmf.dist-git"
+      - "- rpminspect.fmf"
+      - "- rpmlint.fmf"
   - src: .distro/plans/main.fmf.dist-git
     dest: plans/main.fmf
   - src: .distro/tests/
