@@ -1,6 +1,4 @@
 # Common test variables
 tag:
   - import
-framework: beakerlib
 summary: Test CMake import methods
-test: ./test.sh

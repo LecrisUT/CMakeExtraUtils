@@ -1,7 +1,6 @@
 # Common test variables
 tag:
   - DynamicVersion
-framework: beakerlib
 
 # Define tests
 /git_repo:
