@@ -7,6 +7,8 @@ rlJournalStart
 		rlRun "tmp=\$(mktemp -d)" 0 "Create tmp directory"
 		rlRun "rsync -r ./ $tmp" 0 "Copy test files"
 		rlRun "pushd $tmp"
+    extra_args=""
+    [[ -n "$CMakeExtraUtils_ROOT" ]] && extra_args="$extra_args -DCMakeExtraUtils_ROOT=$CMakeExtraUtils_ROOT"
 		rlRun "set -o pipefail"
 cat <<-EOF > .git_archival.txt
 	node: \$Format:%H\$
@@ -17,19 +19,19 @@ EOF
 	rlPhaseEnd
 
 	rlPhaseStartTest "Not a git repo not an archive: Should fail"
-		rlRun "cmake -B ./build ." 1 "CMake should fail"
+		rlRun "cmake -B ./build . $extra_args" 1 "CMake should fail"
 	rlPhaseEnd
 
 	rlPhaseStartTest "No tag created: Should fail"
 		rlRun "git init"
 		rlRun "git add CMakeLists.txt"
 		rlRun "git commit -m 'Initial commit'"
-		rlRun "cmake -B ./build ." 1 "CMake should fail"
+		rlRun "cmake -B ./build . $extra_args" 1 "CMake should fail"
 	rlPhaseEnd
 
 	rlPhaseStartTest "Tagged"
 		rlRun "git tag v0.0.0"
-		rlRun "cmake -B ./build ."
+		rlRun "cmake -B ./build . $extra_args"
 	rlPhaseEnd
 
 	rlPhaseStartCleanup

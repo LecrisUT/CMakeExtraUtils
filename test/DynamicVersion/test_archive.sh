@@ -7,6 +7,8 @@ rlJournalStart
 		rlRun "tmp=\$(mktemp -d)" 0 "Create tmp directory"
 		rlRun "rsync -r ./ $tmp" 0 "Copy test files"
 		rlRun "pushd $tmp"
+    extra_args=""
+    [[ -n "$CMakeExtraUtils_ROOT" ]] && extra_args="$extra_args -DCMakeExtraUtils_ROOT=$CMakeExtraUtils_ROOT"
 		rlRun "set -o pipefail"
 cat <<-EOF > .git_archival.txt
 	node: d0157f38cf8e369c91ef3b144609b402ce9d18ff
@@ -17,7 +19,7 @@ EOF
 	rlPhaseEnd
 
 	rlPhaseStartTest "Valid archive should work"
-		rlRun "cmake -B ./build ."
+		rlRun "cmake -B ./build . $extra_args"
 	rlPhaseEnd
 
 	rlPhaseStartCleanup

@@ -40,15 +40,36 @@ endif ()
 #                                            Options                                            #
 ]==============================================================================================]
 
-option(CMAKEEXTRAUTILS_INSTALL "CMakeExtraUtils: Install files" ${PROJECT_IS_TOP_LEVEL})
+option(CMAKEEXTRAUTILS_TESTS "CMakeExtraUtils: Include tests" ${PROJECT_IS_TOP_LEVEL})
+option(CMAKEEXTRAUTILS_INSTALL "CMakeExtraUtils: Install project files" ${PROJECT_IS_TOP_LEVEL})
 
 #[==============================================================================================[
 #                                     Project configuration                                     #
+]==============================================================================================]
+
+if (CMAKEEXTRAUTILS_INSTALL)
+	include(CMakePackageConfigHelpers)
+	if (UNIX)
+		include(GNUInstallDirs)
+	endif ()
+endif ()
+
+#[==============================================================================================[
 #                                       External packages                                       #
+]==============================================================================================]
+
+# No external dependencies
+
+#[==============================================================================================[
 #                                        Main definition                                        #
 ]==============================================================================================]
 
-# Nothing to configure/import/define for this CMAke project
+# Nothing to actually configure for this project. Only the CMake native tests
+
+if (CMAKEEXTRAUTILS_TESTS)
+	enable_testing()
+	add_subdirectory(test)
+endif ()
 
 #[==============================================================================================[
 #                                       Install or Export                                       #
@@ -56,10 +77,7 @@ option(CMAKEEXTRAUTILS_INSTALL "CMakeExtraUtils: Install files" ${PROJECT_IS_TOP
 
 # Install package files
 if (CMAKEEXTRAUTILS_INSTALL)
-	# Install for find_package
-	include(CMakePackageConfigHelpers)
 	# Will show developer warning, but can't supress it :(
-	include(GNUInstallDirs)
 	# Package files
 	write_basic_package_version_file(
 			CMakeExtraUtilsConfigVersion.cmake
