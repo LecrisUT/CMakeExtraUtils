@@ -1,6 +1,4 @@
-tag:
-  - PackageComps
-
+tag: [ PackageComps ]
 summary: Test PackageComps module
 require+:
   - gcc

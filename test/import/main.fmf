@@ -1,4 +1,2 @@
-# Common test variables
-tag:
-  - import
+tag: [ package ]
 summary: Test CMake import methods

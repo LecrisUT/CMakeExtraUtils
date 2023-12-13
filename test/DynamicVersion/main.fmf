@@ -1,6 +1,4 @@
-# Common test variables
-tag:
-  - DynamicVersion
+tag: [ DynamicVersion ]
 
 # Define tests
 /git_repo:
