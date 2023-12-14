@@ -29,7 +29,7 @@ jobs:
           python-version: 3.x
       # TODO: This will be migrated to standalone actions
       - name: Setup tmt environment
-        run: dnf install -y tmt
+        run: dnf install -y tmt tmt+report-junit
       - uses: lukka/get-cmake@latest
         with:
           cmakeVersion: ${{ matrix.cmake }}
@@ -42,4 +42,43 @@ jobs:
       # TODO: This will be migrated to standalone actions
       - name: Run tmt tests
         run: >
-          tmt --root ./test run --all provision -h local
+          tmt --root ./test run --all provision -h local report -h junit --file report.xml
+      - name: Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: JUnit-CMake-${{ matrix.cmake }}
+          path: report.xml
+  report:
+    name: Report JUnit
+    needs: [ tests ]
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download test results
+        uses: actions/download-artifact@v4
+      - name: Publish Test Report
+        uses: mikepenz/action-junit-report@v4
+        with:
+          check_name: CMake Tests (mikepenz)
+          detailed_summary: true
+          annotate_notice: true
+          include_passed: true
+          report_paths: "*/report.xml"
+      - name: Test Report
+        uses: dorny/test-reporter@v1
+        with:
+          name: CMake Tests (dorny)
+          path: "*/report.xml"
+          reporter: java-junit
+          fail-on-error: false
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        with:
+          check_name: CMake Tests (EnricoMi)
+          files: "*/report.xml"
+    if: always()

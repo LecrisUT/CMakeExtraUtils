@@ -14,6 +14,10 @@ jobs:
   tests:
     needs: [ pre-commit ]
     uses: ./.github/workflows/step_test.yaml
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write
   docs:
     needs: [ pre-commit ]
     uses: ./.github/workflows/step_docs.yaml
