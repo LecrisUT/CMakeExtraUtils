@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pre-commit:
+    uses: ./.github/workflows/step_pre-commit.yaml
+
+  tests:
+    needs: [ pre-commit ]
+    uses: ./.github/workflows/step_test.yaml
+
+  docs:
+    needs: [ pre-commit ]
+    uses: ./.github/workflows/step_docs.yaml
+
+  pass:
+    needs: [ pre-commit, tests, docs ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check all CI jobs
+        uses: re-actors/alls-green@release/v1
+        with:
+          jobs: ${{ toJSON(needs) }}
+    if: always()

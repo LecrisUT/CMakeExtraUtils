@@ -1,0 +1,45 @@
+name: test
+run-name: Run tests
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    name: CMake ${{ matrix.cmake }}
+    runs-on: ubuntu-latest
+    container: ghcr.io/lecrisut/dev-env:main
+    continue-on-error: ${{ matrix.experimental || false }}
+    strategy:
+      fail-fast: false
+      matrix:
+        cmake: ["3.20", "latest", "latestrc"]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      # Note: Proper solution is: https://github.com/actions/runner/issues/2033#issuecomment-1598547465
+      - name: Temporary fix for git permissions
+        run: git config --global --add safe.directory "*"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: 3.x
+      # TODO: This will be migrated to standalone actions
+      - name: Setup tmt environment
+        run: dnf install -y tmt
+      - uses: lukka/get-cmake@latest
+        with:
+          cmakeVersion: ${{ matrix.cmake }}
+      - name: Build and test native CMake
+        run: |
+          # Not running presets because of minimum CMake version being tested
+          cmake -B ./build
+          ctest --test-dir ./build --output-on-failure
+          echo "CMakeExtraUtils_ROOT=$(pwd)/build" >> $GITHUB_ENV
+      # TODO: This will be migrated to standalone actions
+      - name: Run tmt tests
+        run: >
+          tmt --root ./test run --all provision -h local
