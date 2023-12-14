@@ -61,27 +61,13 @@ jobs:
       pull-requests: write
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
       - name: Download test results
         uses: actions/download-artifact@v4
-      - name: Publish Test Report
-        uses: mikepenz/action-junit-report@v4
-        with:
-          check_name: CMake Tests (mikepenz)
-          detailed_summary: true
-          annotate_notice: true
-          include_passed: true
-          report_paths: "*/report.xml"
-      - name: Test Report
-        uses: dorny/test-reporter@v1
-        with:
-          name: CMake Tests (dorny)
-          path: "*/report.xml"
-          reporter: java-junit
-          fail-on-error: false
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
         with:
-          check_name: CMake Tests (EnricoMi)
           files: "*/report.xml"
+          large_files: true
+          report_individual_runs: true
+          report_suite_logs: any
     if: always()
