@@ -7,7 +7,7 @@ Export and import targets as individual components. Special components `shared` 
 The main `CMakeLists.txt` that exports the target:
 
 ```cmake
-cmake_minimum_required(VERSION 3.25)
+cmake_minimum_required(VERSION 3.20)
 
 project(My_Project)
 
@@ -48,7 +48,7 @@ find_components(COMPONENTS my_component)
 The user will then be able to use:
 
 ```cmake
-cmake_minimum_required(VERSION 3.25)
+cmake_minimum_required(VERSION 3.20)
 
 project(Downstream_Project)
 

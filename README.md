@@ -11,7 +11,7 @@ These utilities can be included using both `find_package()` and `ExternalProject
 installed on your system:
 
 ```cmake
-cmake_minimum_required(VERSION 3.25)
+cmake_minimum_required(VERSION 3.20)
 
 find_package(CMakeExtraUtils REQUIRED)
 
@@ -25,7 +25,7 @@ project(MyProject
 or if you want to download a specific version:
 
 ```cmake
-cmake_minimum_required(VERSION 3.25)
+cmake_minimum_required(VERSION 3.20)
 
 FetchContet_Declare(CMakeExtraUtils
         GIT_REPOSITORY https://github.com/LecriUT/CMakeExtraUtils

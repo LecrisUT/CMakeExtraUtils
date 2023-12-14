@@ -5,7 +5,7 @@ Calculate the project version from the git tags or `.git_archival.txt` if the so
 ## Example
 
 ```cmake
-cmake_minimum_required(VERSION 3.25)
+cmake_minimum_required(VERSION 3.20)
 
 find_package(CMakeExtraUtils REQUIRED)
 
