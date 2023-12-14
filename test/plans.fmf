@@ -1,0 +1,26 @@
+# Do not inherit from `main.fmf` since that contains the test metadata
+/:
+  inherit: false
+/full:
+  summary: Run all tests
+  discover:
+    how: fmf
+  execute:
+    how: tmt
+  adjust:
+    - # When run locally or in GitHub CI
+      when: initiator is not defined or initiator != packit
+      # Do not run containerized because we need the original files
+      provision:
+        how: local
+      prepare+<:
+        - how: shell
+          script: |
+            cd ${TMT_PLAN_DATA}
+            if ! command -v yq &> /dev/null; then
+              echo "yq command not found. Please install it or make it available in a virtual environment"
+              exit 1
+            fi
+            root="$(yq -r .root ${TMT_TREE}/../../../run.yaml)/.."
+            cmake -S $root -B ./build
+            echo "CMakeExtraUtils_ROOT=${TMT_PLAN_DATA}/build" >> ${TMT_PLAN_ENVIRONMENT_FILE}

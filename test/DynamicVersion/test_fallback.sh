@@ -7,6 +7,8 @@ rlJournalStart
 		rlRun "tmp=\$(mktemp -d)" 0 "Create tmp directory"
 		rlRun "rsync -r ./ $tmp" 0 "Copy test files"
 		rlRun "pushd $tmp"
+    extra_args=""
+    [[ -n "$CMakeExtraUtils_ROOT" ]] && extra_args="$extra_args -DCMakeExtraUtils_ROOT=$CMakeExtraUtils_ROOT"
 		rlRun "set -o pipefail"
 cat <<-EOF > .git_archival.txt
 	node: \$Format:%H\$
@@ -17,8 +19,8 @@ EOF
 	rlPhaseEnd
 
 	rlPhaseStartTest "Not a git repo and not an archive"
-		rlRun "cmake -B ./build ." 1 "Fail without fallback"
-		rlRun "cmake -B ./build . -DFALLBACK_VERSION=0.1.2" 0 "Succeed when using fallback"
+		rlRun "cmake -B ./build . $extra_args" 1 "Fail without fallback"
+		rlRun "cmake -B ./build . -DFALLBACK_VERSION=0.1.2 $extra_args" 0 "Succeed when using fallback"
 	rlPhaseEnd
 
 	rlPhaseStartCleanup

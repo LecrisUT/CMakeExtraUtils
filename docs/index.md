@@ -14,4 +14,5 @@ glob: true
 ---
 install
 cmake_modules/index
+test
 :::

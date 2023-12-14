@@ -3,3 +3,7 @@ test: ./test.sh
 require:
   - cmake
   - rsync
+
+/ctest:
+  tag: [ ctest ]
+  summary: CMake native ctest
