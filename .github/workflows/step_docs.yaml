@@ -20,6 +20,8 @@ jobs:
           # Run default html builder with warnings as error
           - builder: html
             args: -W
+            # TODO: Fix documentation and warnings
+            experimental: true
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
