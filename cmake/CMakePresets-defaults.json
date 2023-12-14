@@ -3,13 +3,23 @@
   "configurePresets": [
     {
       "name": "default",
-      "displayName": "Default configuration preset",
+      "displayName": "Default preset",
       "binaryDir": "cmake-build-release",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": {
           "type": "STRING",
           "value": "Release"
         }
+      }
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "default",
+      "displayName": "Default preset",
+      "configurePreset": "default",
+      "output": {
+        "outputOnFailure": true
       }
     }
   ],
@@ -20,6 +30,10 @@
       "steps": [
         {
           "type": "configure",
+          "name": "default"
+        },
+        {
+          "type": "test",
           "name": "default"
         }
       ]

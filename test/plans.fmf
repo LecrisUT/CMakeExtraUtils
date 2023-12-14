@@ -16,11 +16,15 @@
       prepare+<:
         - how: shell
           script: |
-            cd ${TMT_PLAN_DATA}
-            if ! command -v yq &> /dev/null; then
-              echo "yq command not found. Please install it or make it available in a virtual environment"
-              exit 1
+            if [[ ! -d "${CMakeExtraUtils_ROOT}" ]]; then
+              # If we don't have a pre-built CMakeExtraUtils, build it at this stage
+              cd ${TMT_PLAN_DATA}
+              if ! command -v yq &> /dev/null; then
+                echo "yq command not found. Please install it or make it available in a virtual environment"
+                exit 1
+              fi
+              root="$(yq -r .root ${TMT_TREE}/../../../run.yaml)/.."
+              cmake -S $root -B ./build
+              CMakeExtraUtils_ROOT="${TMT_PLAN_DATA}/build"
             fi
-            root="$(yq -r .root ${TMT_TREE}/../../../run.yaml)/.."
-            cmake -S $root -B ./build
-            echo "CMakeExtraUtils_ROOT=${TMT_PLAN_DATA}/build" >> ${TMT_PLAN_ENVIRONMENT_FILE}
+            echo "CMakeExtraUtils_ROOT=${CMakeExtraUtils_ROOT}" >> ${TMT_PLAN_ENVIRONMENT_FILE}

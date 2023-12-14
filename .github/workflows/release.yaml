@@ -1,24 +1,33 @@
 name: release
-run-name: Prepare release
+run-name: Release
 
 on:
   push:
     tags:
       - "v[0-9]+.[0-9]+.[0-9]+"
       - "v[0-9]+.[0-9]+.[0-9]+-rc[0-9]+"
+  workflow_dispatch:
 
 jobs:
+  pre-commit:
+    uses: ./.github/workflows/step_pre-commit.yaml
   tests:
-    uses: ./.github/workflows/test.yaml
-    secrets: inherit
+    needs: [ pre-commit ]
+    uses: ./.github/workflows/step_test.yaml
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write
+  docs:
+    needs: [ pre-commit ]
+    uses: ./.github/workflows/step_docs.yaml
+
   release:
-    needs: [ tests ]
+    needs: [ tests, docs ]
     name: Create release
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: softprops/action-gh-release@v1
         with:
           name: CMakeExtraUtils ${{ github.ref_name }}

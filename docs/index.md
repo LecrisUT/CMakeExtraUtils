@@ -5,7 +5,7 @@ CMakeExtraUtils is a collection of cmake modules designed to help you manage and
 See the [installation guide](install) for details on how to import this project and
 [CMake modules](cmake_modules/index) for the modules available.
 
-:::{toctree}
+```{toctree}
 ---
 maxdepth: 2
 titlesonly: true
@@ -14,5 +14,4 @@ glob: true
 ---
 install
 cmake_modules/index
-test
-:::
+```

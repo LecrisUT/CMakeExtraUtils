@@ -1,10 +1,10 @@
 # PackageComps
 
-:::{include} ../../cmake/PackageComps.md
+```{include} ../../cmake/PackageComps.md
 ---
 start-after: "# [`PackageComps.cmake`](PackageComps.cmake)"
 ---
-:::
+```
 
 :::{dropdown} Full source code
 
