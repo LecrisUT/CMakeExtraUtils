@@ -64,7 +64,18 @@ endif ()
 #                                        Main definition                                        #
 ]==============================================================================================]
 
-# Nothing to actually configure for this project. Only the CMake native tests
+# Copy the module files to build directory
+# This is needed to make the scripts importable by ${builddir}/CMakeExtraUtilsConfig.cmake
+foreach (module IN ITEMS
+		DynamicVersion
+		PackageComps
+)
+	configure_file(
+			${PROJECT_SOURCE_DIR}/cmake/${module}.cmake
+			${CMAKE_CURRENT_BINARY_DIR}/${module}.cmake
+			COPYONLY
+	)
+endforeach ()
 
 if (CMAKEEXTRAUTILS_TESTS)
 	enable_testing()
