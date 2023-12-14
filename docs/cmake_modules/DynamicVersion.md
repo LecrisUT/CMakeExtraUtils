@@ -1,10 +1,10 @@
 # DynamicVersion
 
-:::{include} ../../cmake/DynamicVersion.md
+```{include} ../../cmake/DynamicVersion.md
 ---
 start-after: "# [`DynamicVersion.cmake`](DynamicVersion.cmake)"
 ---
-:::
+```
 
 :::{dropdown} Full source code
 

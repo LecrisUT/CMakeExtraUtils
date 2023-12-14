@@ -20,7 +20,6 @@ exclude_patterns = [
 source_suffix = [".md"]
 
 html_theme = "furo"
-html_static_path = ["_static"]
 
 myst_enable_extensions = [
     "tasklist",
