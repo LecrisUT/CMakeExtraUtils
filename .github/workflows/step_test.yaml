@@ -23,7 +23,10 @@ jobs:
           fetch-depth: 0
       # Note: Proper solution is: https://github.com/actions/runner/issues/2033#issuecomment-1598547465
       - name: Temporary fix for git permissions
-        run: git config --global --add safe.directory "*"
+        run: |
+          git config --global --add safe.directory "*"
+          git config --global user.email "bot@github.com"
+          git config --global user.name "GitHub Actions Bot"
       - uses: actions/setup-python@v5
         with:
           python-version: 3.x
