@@ -40,7 +40,7 @@ function(dynamic_version)
 	  dynamic_version(PROJECT_PREFIX <prefix>)
 	  dynamic_version(PROJECT_PREFIX <prefix>
 	  	[OUTPUT_VERSION <var>] [OUTPUT_DESCRIBE <var>] [OUTPUT_COMMIT <var>]
-	  	[PROJECT_SOURCE <path>] [GIT_ARCHIVAL_FILE <file>])
+		[OUTPUT_DISTANCE <var>] [PROJECT_SOURCE <path>] [GIT_ARCHIVAL_FILE <file>])
 
 	Fallbacks
 	  dynamic_version(...
@@ -63,6 +63,9 @@ function(dynamic_version)
 
 	`OUTPUT_COMMIT` [Default: GIT_COMMIT]
 	  Variable where to save the current git commit hash
+
+    `OUTPUT_DISTANCE` [Default: GIT_DISTANCE]
+      Variable where to save the distance from git tag
 
 	`PROJECT_SOURCE` [Default: `${CMAKE_CURRENT_SOURCE_DIR}`]
 	  Location of the project source. Has to be either an extracted git archive or a git clone
@@ -117,6 +120,9 @@ function(dynamic_version)
 	`${OUTPUT_FOLDER}/.git_commit`
 	  Current commit
 
+	`${OUTPUT_FOLDER}/.git_distance`
+	  Current git distance from tag
+
 	## See also
 	- [pypa/setuptools_scm](https://github.com/pypa/setuptools_scm)
 
@@ -131,6 +137,7 @@ function(dynamic_version)
 			OUTPUT_VERSION
 			OUTPUT_DESCRIBE
 			OUTPUT_COMMIT
+			OUTPUT_DISTANCE
 			PROJECT_SOURCE
 			GIT_ARCHIVAL_FILE
 			FALLBACK_VERSION
@@ -154,6 +161,9 @@ function(dynamic_version)
 	endif ()
 	if (NOT DEFINED ARGS_OUTPUT_COMMIT)
 		set(ARGS_OUTPUT_COMMIT GIT_COMMIT)
+	endif ()
+	if (NOT DEFINED ARGS_OUTPUT_DISTANCE)
+		set(ARGS_OUTPUT_DISTANCE GIT_DISTANCE)
 	endif ()
 	if (NOT DEFINED ARGS_PROJECT_SOURCE)
 		set(ARGS_PROJECT_SOURCE ${CMAKE_CURRENT_SOURCE_DIR})
@@ -219,7 +229,7 @@ function(dynamic_version)
 			COMMAND_ERROR_IS_FATAL ANY)
 
 	# Copy all configured files
-	foreach (file IN ITEMS .DynamicVersion.json .version .git_describe .git_commit)
+	foreach (file IN ITEMS .DynamicVersion.json .version .git_describe .git_commit .git_distance)
 		if (EXISTS ${ARGS_TMP_FOLDER}/${file})
 			if (CMAKE_VERSION VERSION_GREATER_EQUAL 3.21)
 				file(COPY_FILE ${ARGS_TMP_FOLDER}/${file} ${ARGS_OUTPUT_FOLDER}/${file})
@@ -235,6 +245,7 @@ function(dynamic_version)
 	string(JSON ${ARGS_OUTPUT_VERSION} ERROR_VARIABLE _ GET ${data} version)
 	string(JSON ${ARGS_OUTPUT_DESCRIBE} ERROR_VARIABLE _ GET ${data} describe)
 	string(JSON ${ARGS_OUTPUT_COMMIT} ERROR_VARIABLE _ GET ${data} commit)
+	string(JSON ${ARGS_OUTPUT_DISTANCE} ERROR_VARIABLE _ GET ${data} distance)
 
 	# Configure targets
 	if (failed)
@@ -278,11 +289,13 @@ function(dynamic_version)
 		set(${ARGS_OUTPUT_DESCRIBE} ${${ARGS_OUTPUT_DESCRIBE}} PARENT_SCOPE)
 		set(${ARGS_OUTPUT_VERSION} ${${ARGS_OUTPUT_VERSION}} PARENT_SCOPE)
 		set(${ARGS_OUTPUT_COMMIT} ${${ARGS_OUTPUT_COMMIT}} PARENT_SCOPE)
+		set(${ARGS_OUTPUT_DISTANCE} ${${ARGS_OUTPUT_DISTANCE}} PARENT_SCOPE)
 	endif ()
 	return(PROPAGATE
 			${ARGS_OUTPUT_DESCRIBE}
 			${ARGS_OUTPUT_VERSION}
 			${ARGS_OUTPUT_COMMIT}
+			${ARGS_OUTPUT_DISTANCE}
 	)
 endfunction()
 
@@ -451,6 +464,23 @@ function(get_dynamic_version)
 		string(JSON data SET
 				${data} commit \"${git-hash}\")
 		file(WRITE ${ARGS_TMP_FOLDER}/.git_commit ${git-hash})
+        # Get full describe with distance
+        execute_process(COMMAND ${GIT_EXECUTABLE} describe --tags --long --match=?[0-9.]*
+                WORKING_DIRECTORY ${ARGS_PROJECT_SOURCE}
+                OUTPUT_VARIABLE describe-name-long
+                OUTPUT_STRIP_TRAILING_WHITESPACE
+                COMMAND_ERROR_IS_FATAL ANY)
+        # Match version (as above) and distance
+        if (NOT describe-name-long MATCHES "^([v]?([0-9\\.]+)-([0-9]+)-.*)")
+            message(${error_message_type}
+                    "Version tag is ill-formatted\n"
+                    "  Describe-name-long: ${describe-name-long}"
+            )
+            return()
+        endif ()
+        string(JSON data SET
+                ${data} distance \"${CMAKE_MATCH_3}\")
+        file(WRITE ${ARGS_TMP_FOLDER}/.git_distance ${CMAKE_MATCH_3})
 		message(DEBUG
 				"Found appropriate tag from git"
 		)
