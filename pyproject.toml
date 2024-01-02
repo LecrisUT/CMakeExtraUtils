@@ -17,7 +17,7 @@ docs = [
     "sphinx-design",
     "sphinx-togglebutton",
     "myst-parser",
-    "sphinxcontrib-moderncmakedomain",
+    "sphinxcontrib-moderncmakedomain @ git+https://github.com/LecrisUT/moderncmakedomain@feat/markdown",
 ]
 dev = [
     "pre-commit",
