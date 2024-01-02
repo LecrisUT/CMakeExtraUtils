@@ -7,6 +7,7 @@ extensions = [
     "sphinx_design",
     "sphinx_togglebutton",
     "sphinxcontrib.moderncmakedomain",
+    "sphinx.ext.intersphinx",
 ]
 
 templates_path = []
@@ -24,4 +25,14 @@ html_theme = "furo"
 myst_enable_extensions = [
     "tasklist",
     "colon_fence",
+    "deflist",
 ]
+myst_heading_anchors = 3
+
+primary_domain = 'cmake'
+highlight_language = 'cmake'
+
+
+intersphinx_mapping = {
+    "cmake": ("https://cmake.org/cmake/help/latest", None),
+}
