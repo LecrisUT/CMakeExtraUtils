@@ -2,11 +2,13 @@
 # DynamicVersion
 
 Helper module to get the project's version dynamically. Format is compatible with python's
-[`setuptools_scm`](https://github.com/pypa/setuptools_scm#git-archives)
+[setuptools-scm]
 
 ## Commands
 
 - {command}`dynamic_version`
+
+[setuptools-scm]: https://setuptools-scm.readthedocs.io/en/latest/usage/#git-archives
 
 ]===]
 
@@ -48,73 +50,75 @@ function(dynamic_version)
 
 	## Options
 	`PROJECT_PREFIX`
-	  Prefix to be used for namespacing targets, typically ${PROJECT_NAME}
+	: Prefix to be used for namespacing targets, typically ${PROJECT_NAME}
 
 	`OUTPUT_VERSION` [Default: PROJECT_VERSION]
-	  Variable where to save the calculated version
+	: Variable where to save the calculated version
 
 	`OUTPUT_DESCRIBE` [Default: GIT_DESCRIBE]
-	  Variable where to save the pure `git describe` output
+	: Variable where to save the pure `git describe` output
 
 	`OUTPUT_COMMIT` [Default: GIT_COMMIT]
-	  Variable where to save the current git commit hash
+	: Variable where to save the current git commit hash
 
 	`PROJECT_SOURCE` [Default: `${CMAKE_CURRENT_SOURCE_DIR}`]
-	  Location of the project source. Has to be either an extracted git archive or a git clone
+	: Location of the project source. Has to be either an extracted git archive or a git clone
 
 	`GIT_ARCHIVAL_FILE` [Default: `${PROJECT_SOURCE}/.git_archival.txt`]
-	  Location of `.git_archival.txt` file. See [pypa/setuptools_scm](https://github.com/pypa/setuptools_scm#git-archives)
-	  for more details
+	: Location of `.git_archival.txt` file. See [pypa/setuptools_scm] for more details
 
 	`FALLBACK_VERSION`
-	  Fallback version to be set if version cannot be dynamically determined. Implies `ALLOW_FAILS`
+	: Fallback version to be set if version cannot be dynamically determined. Implies `ALLOW_FAILS`
 
 	`FALLBACK_HASH`
-	  Fallback git hash to be used in `OUTPUT_COMMIT` if commit cannot be determined.
+	: Fallback git hash to be used in `OUTPUT_COMMIT` if commit cannot be determined.
 	  If not defined target GitHash will not be created if project is not a git repo
 
 	`ALLOW_FAILS`
-	  Do not return with `FATAL_ERROR` if version cannot be dynamically determined. CMakeLists author is responsible
+	: Do not return with `FATAL_ERROR` if version cannot be dynamically determined. CMakeLists author is responsible
 	  for setting appropriate version if fails
 
 	### Additional configuration options
 
 	`TMP_FOLDER` [Default: `${CMAKE_CURRENT_BINARY_DIR}/tmp`]
-	  Temporary path to store `DynamicVersion`'s temporary files
+	: Temporary path to store `DynamicVersion`'s temporary files
 
 	`OUTPUT_FOLDER` [Default: `${CMAKE_CURRENT_BINARY_DIR}`]
-	  Path where to store generated files
+	: Path where to store generated files
 
 	## Targets
 	`${PROJECT_PREFIX}Version`
-	  Target that recalculates the dynamic version each time. See [](#Output-files) for using dependencies that only
+	: Target that recalculates the dynamic version each time. See <project:#output-files> for using dependencies that only
 	  change when the actual commit/describe/version change.
 
 	`${PROJECT_PREFIX}GitHash`
-	  Target that recalculates the git hash each time.
+	: Target that recalculates the git hash each time.
 
 	## Output files
 	:::{note}
 	These files are updated only when the contents change. You can use them as dependencies for files generated from
-	<inv:cmake:cmake:command#command:configure_file>. See <inv:cmake:cmake:prop_sf#prop_sf:OBJECT_DEPENDS> for more
-	info on how to add file-level dependency
+	[`configure_file`]. See [`OBJECT_DEPENDS`] for more info on how to add file-level dependency
 	:::
 
 	`${OUTPUT_FOLDER}/.DynamicVersion.json`
-	  All computed data of `DynamicVersion`
+	: All computed data of `DynamicVersion`
 
 	`${OUTPUT_FOLDER}/.version`
-	  Computed version
+	: Computed version
 
 	`${OUTPUT_FOLDER}/.git_describe`
-	  Computed git describe
+	: Computed git describe
 
 	`${OUTPUT_FOLDER}/.git_commit`
-	  Current commit
+	: Current commit
 
-	## See also
-	- [pypa/setuptools_scm](https://github.com/pypa/setuptools_scm)
+	:::{seealso}
+	[pypa/setuptools_scm]
+	:::
 
+	[pypa/setuptools_scm]: https://github.com/pypa/setuptools_scm
+	[`configure_file`]: inv:cmake:cmake:command#command:configure_file
+	[`OBJECT_DEPENDS`]: inv:cmake:cmake:prop_sf#prop_sf:OBJECT_DEPENDS
 	]===]
 
 	list(APPEND CMAKE_MESSAGE_CONTEXT dynamic_version)
@@ -302,9 +306,11 @@ function(get_dynamic_version)
 	## Options
 	See {command}`dynamic_version` for details
 
-	## See also
-	- [pypa/setuptools_scm](https://github.com/pypa/setuptools_scm)
+	:::{seealso}
+	- [pypa/setuptools_scm]
+	:::
 
+	[pypa/setuptools_scm]: https://github.com/pypa/setuptools_scm
 	]===]
 
 	list(APPEND CMAKE_MESSAGE_CONTEXT get_dynamic_version)
