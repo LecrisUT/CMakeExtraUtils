@@ -479,3 +479,5 @@ if (DynamicVersion_RUN)
 	endif ()
 	get_dynamic_version(${DynamicVersion_ARGS})
 endif ()
+
+list(POP_BACK CMAKE_MESSAGE_CONTEXT)

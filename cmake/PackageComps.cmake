@@ -652,3 +652,5 @@ function(export_component)
 			"  TargetFile: ${TargetFile}"
 	)
 endfunction()
+
+list(POP_BACK CMAKE_MESSAGE_CONTEXT)
