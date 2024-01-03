@@ -6,12 +6,10 @@ See the [installation guide](install) for details on how to import this project 
 [CMake modules](cmake_modules/index) for the modules available.
 
 ```{toctree}
----
-maxdepth: 2
-titlesonly: true
-caption: Contents
-glob: true
----
+: maxdepth: 2
+: titlesonly: true
+: caption: Contents
+
 install
 cmake_modules/index
 ```

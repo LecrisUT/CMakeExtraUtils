@@ -1,4 +1,7 @@
 tag: [ DynamicVersion ]
+require+:
+  - gcc-c++
+  - ninja-build
 
 # Define tests
 /git_repo:

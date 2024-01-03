@@ -12,6 +12,11 @@ Helper module to get the project's version dynamically. Format is compatible wit
 
 include_guard()
 list(APPEND CMAKE_MESSAGE_CONTEXT DynamicVersion)
+if (POLICY CMP0140)
+	# Enable using return(PROPAGATE)
+	# TODO: Remove when cmake 3.25 is commonly distributed
+	cmake_policy(SET CMP0140 NEW)
+endif ()
 
 #[==============================================================================================[
 #                                         Preparations                                         #
@@ -215,8 +220,12 @@ function(dynamic_version)
 
 	# Copy all configured files
 	foreach (file IN ITEMS .DynamicVersion.json .version .git_describe .git_commit)
-		if (EXISTS ${file})
-			file(COPY_FILE ${ARGS_TMP_FOLDER}/${file} ${ARGS_OUTPUT_FOLDER}/${file})
+		if (EXISTS ${ARGS_TMP_FOLDER}/${file})
+			if (CMAKE_VERSION VERSION_GREATER_EQUAL 3.21)
+				file(COPY_FILE ${ARGS_TMP_FOLDER}/${file} ${ARGS_OUTPUT_FOLDER}/${file})
+			else ()
+				file(COPY ${ARGS_TMP_FOLDER}/${file} DESTINATION ${ARGS_OUTPUT_FOLDER}/)
+			endif ()
 		endif ()
 	endforeach ()
 
@@ -343,13 +352,13 @@ function(get_dynamic_version)
 	# Set fallback values
 	if (DEFINED ARGS_FALLBACK_VERSION)
 		string(JSON data SET
-				${data} version ${ARGS_FALLBACK_VERSION})
+				${data} version \"${ARGS_FALLBACK_VERSION}\")
 		file(WRITE ${ARGS_TMP_FOLDER}/.DynamicVersion.json ${data})
 		file(WRITE ${ARGS_TMP_FOLDER}/.version ${ARGS_FALLBACK_VERSION})
 	endif ()
 	if (DEFINED ARGS_FALLBACK_HASH)
 		string(JSON data SET
-				${data} commit ${ARGS_FALLBACK_HASH})
+				${data} commit \"${ARGS_FALLBACK_HASH}\")
 		file(WRITE ${ARGS_TMP_FOLDER}/.DynamicVersion.json ${data})
 		file(WRITE ${ARGS_TMP_FOLDER}/.git_commit ${ARGS_FALLBACK_HASH})
 	endif ()
@@ -387,8 +396,11 @@ function(get_dynamic_version)
 				${data} version \"${CMAKE_MATCH_2}\")
 		file(WRITE ${ARGS_TMP_FOLDER}/.version ${CMAKE_MATCH_2})
 		# Get commit hash
+		# Cannot use Regex match from here, need to run string(REGEX MATCH) again
+		# https://gitlab.kitware.com/cmake/cmake/-/issues/23770
 		file(STRINGS ${ARGS_GIT_ARCHIVAL_FILE} node
 				REGEX "^node:[ ]?(.*)")
+		string(REGEX MATCH "^node:[ ]?(.*)" node "${node}")
 		string(JSON data SET
 				${data} commit \"${CMAKE_MATCH_1}\")
 		file(WRITE ${ARGS_TMP_FOLDER}/.git_commit ${CMAKE_MATCH_1})
@@ -474,3 +486,5 @@ if (DynamicVersion_RUN)
 	endif ()
 	get_dynamic_version(${DynamicVersion_ARGS})
 endif ()
+
+list(POP_BACK CMAKE_MESSAGE_CONTEXT)

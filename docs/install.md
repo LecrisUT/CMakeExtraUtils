@@ -1,8 +1,6 @@
 # Installation guide
 
 :::{include} ../README.md
----
-start-after: "## Installation"
-end-before: "## "
----
+: start-after: "## Installation"
+: end-before: "## "
 :::
