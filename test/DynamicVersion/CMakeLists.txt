@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.20)
 
+list(APPEND CMAKE_MESSAGE_CONTEXT TestProject)
+
 find_package(CMakeExtraUtils REQUIRED)
 
 include(DynamicVersion)
@@ -9,6 +11,23 @@ else ()
     dynamic_version()
 endif ()
 
-project(Test_DynamicVersion
+project(TestProject
         VERSION ${PROJECT_VERSION}
-        LANGUAGES NONE)
+        LANGUAGES CXX)
+
+message("version: ${PROJECT_VERSION}")
+message("commit: ${GIT_COMMIT}")
+message("describe: ${GIT_DESCRIBE}")
+
+configure_file(src/version.h.in version.h)
+add_executable(version src/version.cpp)
+target_include_directories(version PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+add_dependencies(version Version)
+
+set_property(DIRECTORY APPEND PROPERTY
+        CMAKE_CONFIGURE_DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/.git_commit
+)
+configure_file(src/commit.h.in commit.h)
+add_executable(commit src/commit.cpp)
+target_include_directories(commit PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+add_dependencies(commit GitHash)

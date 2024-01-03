@@ -7,20 +7,27 @@ rlJournalStart
 		rlRun "tmp=\$(mktemp -d)" 0 "Create tmp directory"
 		rlRun "rsync -r ./ $tmp" 0 "Copy test files"
 		rlRun "pushd $tmp"
-    extra_args=""
-    [[ -n "$CMakeExtraUtils_ROOT" ]] && extra_args="$extra_args -DCMakeExtraUtils_ROOT=$CMakeExtraUtils_ROOT"
+		rlRun "build_dir=./build" 0 "Set build_dir"
+    rlRun "configure_args=\"-B \${build_dir} -G Ninja --log-context --fresh\"" 0 "Set configure_args"
+    rlRun "build_args=\"--build \${build_dir} -v\"" 0 "Set build_args"
+    [[ -n "$CMakeExtraUtils_ROOT" ]] && rlRun "configure_args=\"\${configure_args} -DCMakeExtraUtils_ROOT=\${CMakeExtraUtils_ROOT}\"" 0 "Add CMakeExtraUtils_ROOT"
 		rlRun "set -o pipefail"
-cat <<-EOF > .git_archival.txt
-	node: \$Format:%H\$
-	node-date: \$Format:%cI\$
-	describe-name: \$Format:%(describe:tags=true,match=?[0-9.]*)\$
-	ref-names: \$Format:%D\$
-EOF
 	rlPhaseEnd
 
-	rlPhaseStartTest "Not a git repo and not an archive"
-		rlRun "cmake -B ./build . $extra_args" 1 "Fail without fallback"
-		rlRun "cmake -B ./build . -DFALLBACK_VERSION=0.1.2 $extra_args" 0 "Succeed when using fallback"
+	rlPhaseStartTest "Not a git repo and not an archive: Should fail"
+		rlRun -s "cmake ${configure_args}" 1 "CMake configure"
+		rlAssertGrep "Project source is neither a git repository nor a git archive" $rlRun_LOG
+	rlPhaseEnd
+
+	rlPhaseStartTest "With fallback"
+	  rlRun "fallback_version='0.1.2'" 0 "Set fallback_version"
+		rlRun -s "cmake ${configure_args} -DFALLBACK_VERSION=${fallback_version}" 0 "CMake configure"
+		rlAssertGrep "\[TestProject\] version: ${fallback_version}" $rlRun_LOG
+		rlAssertGrep "\[TestProject\] commit: commit-NOTFOUND" $rlRun_LOG
+		rlAssertGrep "\[TestProject\] describe: describe-NOTFOUND" $rlRun_LOG
+		rlRun -s "cmake ${build_args}" 0 "CMake build"
+		rlRun -s "${build_dir}/version" 0 "Run ./version"
+		rlAssertGrep "version: ${fallback_version}" $rlRun_LOG
 	rlPhaseEnd
 
 	rlPhaseStartCleanup

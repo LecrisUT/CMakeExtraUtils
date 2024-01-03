@@ -1,0 +1,6 @@
+#pragma once
+
+#include <string>
+
+const std::string commit = "@GIT_COMMIT@";
+const std::string describe = "@GIT_DESCRIBE@";
