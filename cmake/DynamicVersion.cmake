@@ -12,6 +12,11 @@ Helper module to get the project's version dynamically. Format is compatible wit
 
 include_guard()
 list(APPEND CMAKE_MESSAGE_CONTEXT DynamicVersion)
+if (POLICY CMP0140)
+	# Enable using return(PROPAGATE)
+	# TODO: Remove when cmake 3.25 is commonly distributed
+	cmake_policy(SET CMP0140 NEW)
+endif ()
 
 #[==============================================================================================[
 #                                         Preparations                                         #
