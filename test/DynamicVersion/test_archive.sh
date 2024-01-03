@@ -8,7 +8,7 @@ rlJournalStart
 		rlRun "rsync -r ./ $tmp" 0 "Copy test files"
 		rlRun "pushd $tmp"
 		rlRun "build_dir=./build" 0 "Set build_dir"
-    rlRun "configure_args=\"-B \${build_dir} -G Ninja --log-context --fresh\"" 0 "Set configure_args"
+    rlRun "configure_args=\"-B \${build_dir} -G Ninja --log-context\"" 0 "Set configure_args"
     rlRun "build_args=\"--build \${build_dir} -v\"" 0 "Set build_args"
     [[ -n "$CMakeExtraUtils_ROOT" ]] && rlRun "configure_args=\"\${configure_args} -DCMakeExtraUtils_ROOT=\${CMakeExtraUtils_ROOT}\"" 0 "Add CMakeExtraUtils_ROOT"
     rlRun "echo '.git_archival.txt  export-subst' > .gitattributes" 0 "Configure .gitattributes"
@@ -19,6 +19,7 @@ rlJournalStart
 	rlPhaseEnd
 
 	rlPhaseStartTest "No tag created: Should fail"
+	  [[ -d ${build_dir} ]] && rlRun "rm -rf ${build_dir}" 0 "Clean the build directory"
 	  rlRun "archive_name='no_tag'" 0 "Set archive_name"
 	  rlRun "git archive HEAD --prefix=${archive_name}/ -o ${archive_name}.tar.gz" 0 "Git archive"
 	  rlRun "tar -xf ${archive_name}.tar.gz" 0 "Extract archive"
@@ -27,6 +28,7 @@ rlJournalStart
 	rlPhaseEnd
 
 	rlPhaseStartTest "Tagged archive"
+	  [[ -d ${build_dir} ]] && rlRun "rm -rf ${build_dir}" 0 "Clean the build directory"
 	  rlRun "archive_name='tagged'" 0 "Set archive_name"
 	  rlRun "tag_version=0.0.0" 0 "Set tag_version"
 		rlRun "git tag v\${tag_version}" 0 "Tag git commit"
@@ -48,6 +50,7 @@ rlJournalStart
 	rlPhaseEnd
 
 	rlPhaseStartTest "Off-tag archive"
+	  [[ -d ${build_dir} ]] && rlRun "rm -rf ${build_dir}" 0 "Clean the build directory"
 	  rlRun "archive_name='off-tag'" 0 "Set archive_name"
 		rlRun "touch ./random_file" 0 "Create a random file"
 		rlRun "git add random_file" 0 "Git add the random file"

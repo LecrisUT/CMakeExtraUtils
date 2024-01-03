@@ -221,7 +221,11 @@ function(dynamic_version)
 	# Copy all configured files
 	foreach (file IN ITEMS .DynamicVersion.json .version .git_describe .git_commit)
 		if (EXISTS ${ARGS_TMP_FOLDER}/${file})
-			file(COPY_FILE ${ARGS_TMP_FOLDER}/${file} ${ARGS_OUTPUT_FOLDER}/${file})
+			if (CMAKE_VERSION VERSION_GREATER_EQUAL 3.21)
+				file(COPY_FILE ${ARGS_TMP_FOLDER}/${file} ${ARGS_OUTPUT_FOLDER}/${file})
+			else ()
+				file(COPY ${ARGS_TMP_FOLDER}/${file} DESTINATION ${ARGS_OUTPUT_FOLDER}/)
+			endif ()
 		endif ()
 	endforeach ()
 

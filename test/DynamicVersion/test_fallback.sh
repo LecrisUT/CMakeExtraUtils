@@ -8,7 +8,7 @@ rlJournalStart
 		rlRun "rsync -r ./ $tmp" 0 "Copy test files"
 		rlRun "pushd $tmp"
 		rlRun "build_dir=./build" 0 "Set build_dir"
-    rlRun "configure_args=\"-B \${build_dir} -G Ninja --log-context --fresh\"" 0 "Set configure_args"
+    rlRun "configure_args=\"-B \${build_dir} -G Ninja --log-context\"" 0 "Set configure_args"
     rlRun "build_args=\"--build \${build_dir} -v\"" 0 "Set build_args"
     [[ -n "$CMakeExtraUtils_ROOT" ]] && rlRun "configure_args=\"\${configure_args} -DCMakeExtraUtils_ROOT=\${CMakeExtraUtils_ROOT}\"" 0 "Add CMakeExtraUtils_ROOT"
 		rlRun "set -o pipefail"
