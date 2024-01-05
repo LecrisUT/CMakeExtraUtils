@@ -38,21 +38,21 @@ rlJournalStart
 		rlRun "describe=\$(git describe --tags --long)" 0 "Get git describe"
 		rlRun "distance=\$(echo \${describe} | sed 's/.*-(/d)+-.*/\1/')" 0 "Extract git distance"
 		rlRun -s "cmake ${configure_args}" 0 "CMake configure"
-		rlAssertGrep "\[TestProject\] version: ${tag_version}" $rlRun_LOG
-		rlAssertGrep "\[TestProject\] commit: ${commit}" $rlRun_LOG
-		rlAssertGrep "\[TestProject\] describe: ${describe}" $rlRun_LOG
-		rlAssertGrep "\[TestProject\] distance: ${distance}" $rlRun_LOG
+		rlAssertGrep "^\[TestProject\] version: ${tag_version}\$" $rlRun_LOG
+		rlAssertGrep "^\[TestProject\] commit: ${commit}\$" $rlRun_LOG
+		rlAssertGrep "^\[TestProject\] describe: ${describe}\$" $rlRun_LOG
+		rlAssertGrep "^\[TestProject\] distance: ${distance}\$" $rlRun_LOG
 	rlPhaseEnd
 
 	rlPhaseStartTest "Tagged: Build"
 		rlRun -s "cmake ${build_args}" 0 "CMake build"
 		rlRun -s "${build_dir}/version" 0 "Run ./version"
-		rlAssertGrep "version: ${tag_version}" $rlRun_LOG
+		rlAssertGrep "^version: ${tag_version}\$" $rlRun_LOG
 		rlRun -s "${build_dir}/commit" 0 "Run ./commit"
-		rlAssertGrep "version: ${tag_version}" $rlRun_LOG
-		rlAssertGrep "commit: ${commit}" $rlRun_LOG
-		rlAssertGrep "describe: ${describe}" $rlRun_LOG
-		rlAssertGrep "distance: ${distance}" $rlRun_LOG
+		rlAssertGrep "^version: ${tag_version}\$" $rlRun_LOG
+		rlAssertGrep "^commit: ${commit}\$" $rlRun_LOG
+		rlAssertGrep "^describe: ${describe}\$" $rlRun_LOG
+		rlAssertGrep "^distance: ${distance}\$" $rlRun_LOG
 	rlPhaseEnd
 
 	rlPhaseStartTest "Tagged: Build (Repeat)"
@@ -62,12 +62,12 @@ rlJournalStart
 		rlRun -s "cmake ${build_args}" 0 "CMake build"
 		rlAssertNotGrep "Re-running CMake" $rlRun_LOG
 		rlRun -s "${build_dir}/version" 0 "Run ./version"
-		rlAssertGrep "version: ${tag_version}" $rlRun_LOG
+		rlAssertGrep "^version: ${tag_version}\$" $rlRun_LOG
 		rlRun -s "${build_dir}/commit" 0 "Run ./commit"
-		rlAssertGrep "version: ${tag_version}" $rlRun_LOG
-		rlAssertGrep "commit: ${commit}" $rlRun_LOG
-		rlAssertGrep "describe: ${describe}" $rlRun_LOG
-		rlAssertGrep "distance: ${distance}" $rlRun_LOG
+		rlAssertGrep "^version: ${tag_version}\$" $rlRun_LOG
+		rlAssertGrep "^commit: ${commit}\$" $rlRun_LOG
+		rlAssertGrep "^describe: ${describe}\$" $rlRun_LOG
+		rlAssertGrep "^distance: ${distance}\$" $rlRun_LOG
 	rlPhaseEnd
 
 	rlPhaseStartTest "Off-tag: Build"
@@ -83,21 +83,21 @@ rlJournalStart
 		rlRun -s "cmake ${build_args} -t version" 0 "CMake build (version) 2nd"
 		rlAssertNotGrep "Re-running CMake" $rlRun_LOG
 		rlRun -s "${build_dir}/version" 0 "Run ./version"
-		rlAssertGrep "version: ${tag_version}" $rlRun_LOG
+		rlAssertGrep "^version: ${tag_version}\$" $rlRun_LOG
 		# Commit changed, it should re-configure
 		rlRun -s "cmake ${build_args} -t commit" 0 "CMake build (commit) 1st"
 		rlAssertNotGrep "Re-running CMake" $rlRun_LOG
 		rlRun -s "cmake ${build_args} -t commit" 0 "CMake build (commit) 2nd"
 		rlAssertGrep "Re-running CMake" $rlRun_LOG
-		rlAssertGrep "version: ${tag_version}" $rlRun_LOG
-		rlAssertGrep "commit: ${commit}" $rlRun_LOG
-		rlAssertGrep "describe: ${describe}" $rlRun_LOG
-		rlAssertGrep "distance: ${distance}" $rlRun_LOG
+		rlAssertGrep "^version: ${tag_version}\$" $rlRun_LOG
+		rlAssertGrep "^commit: ${commit}\$" $rlRun_LOG
+		rlAssertGrep "^describe: ${describe}\$" $rlRun_LOG
+		rlAssertGrep "^distance: ${distance}\$" $rlRun_LOG
 		rlRun -s "${build_dir}/commit" 0 "Run ./commit"
-		rlAssertGrep "version: ${tag_version}" $rlRun_LOG
-		rlAssertGrep "commit: ${commit}" $rlRun_LOG
-		rlAssertGrep "describe: ${describe}" $rlRun_LOG
-		rlAssertGrep "distance: ${distance}" $rlRun_LOG
+		rlAssertGrep "^version: ${tag_version}\$" $rlRun_LOG
+		rlAssertGrep "^commit: ${commit}\$" $rlRun_LOG
+		rlAssertGrep "^describe: ${describe}\$" $rlRun_LOG
+		rlAssertGrep "^distance: ${distance}\$" $rlRun_LOG
 	rlPhaseEnd
 
 	rlPhaseStartTest "New tag: Build"
@@ -111,26 +111,26 @@ rlJournalStart
 		rlRun -s "cmake ${build_args} -t commit" 0 "CMake build (commit) 2nd"
 		rlAssertNotGrep "Re-running CMake" $rlRun_LOG
 		rlRun -s "${build_dir}/commit" 0 "Run ./commit"
-		rlAssertGrep "commit: ${commit}" $rlRun_LOG
+		rlAssertGrep "^commit: ${commit}\$" $rlRun_LOG
 		# Version changed, it should re-configure
 		rlRun -s "cmake ${build_args} -t version" 0 "CMake build (version) 1st"
 		rlAssertNotGrep "Re-running CMake" $rlRun_LOG
 		rlRun -s "cmake ${build_args} -t version" 0 "CMake build (version) 2nd"
 		rlAssertGrep "Re-running CMake" $rlRun_LOG
-		rlAssertGrep "version: ${tag_version}" $rlRun_LOG
-		rlAssertGrep "commit: ${commit}" $rlRun_LOG
-		rlAssertGrep "describe: ${describe}" $rlRun_LOG
-		rlAssertGrep "distance: ${distance}" $rlRun_LOG
+		rlAssertGrep "^version: ${tag_version}\$" $rlRun_LOG
+		rlAssertGrep "^commit: ${commit}\$" $rlRun_LOG
+		rlAssertGrep "^describe: ${describe}\$" $rlRun_LOG
+		rlAssertGrep "^distance: ${distance}\$" $rlRun_LOG
 		rlRun -s "${build_dir}/version" 0 "Run ./version"
-		rlAssertGrep "version: ${tag_version}" $rlRun_LOG
+		rlAssertGrep "^version: ${tag_version}\$" $rlRun_LOG
 		# Check the version and describe again for completeness
 		rlRun -s "cmake ${build_args} -t commit" 0 "CMake build (commit) 3rd"
 		rlAssertNotGrep "Re-running CMake" $rlRun_LOG
 		rlRun -s "${build_dir}/commit" 0 "Run ./commit"
-		rlAssertGrep "version: ${tag_version}" $rlRun_LOG
-		rlAssertGrep "commit: ${commit}" $rlRun_LOG
-		rlAssertGrep "describe: ${describe}" $rlRun_LOG
-		rlAssertGrep "distance: ${distance}" $rlRun_LOG
+		rlAssertGrep "^version: ${tag_version}\$" $rlRun_LOG
+		rlAssertGrep "^commit: ${commit}\$" $rlRun_LOG
+		rlAssertGrep "^describe: ${describe}\$" $rlRun_LOG
+		rlAssertGrep "^distance: ${distance}\$" $rlRun_LOG
 	rlPhaseEnd
 
 

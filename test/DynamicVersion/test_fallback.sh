@@ -22,13 +22,13 @@ rlJournalStart
 	rlPhaseStartTest "With fallback"
 	  rlRun "fallback_version='0.1.2'" 0 "Set fallback_version"
 		rlRun -s "cmake ${configure_args} -DFALLBACK_VERSION=${fallback_version}" 0 "CMake configure"
-		rlAssertGrep "\[TestProject\] version: ${fallback_version}" $rlRun_LOG
-		rlAssertGrep "\[TestProject\] commit: commit-NOTFOUND" $rlRun_LOG
-		rlAssertGrep "\[TestProject\] describe: describe-NOTFOUND" $rlRun_LOG
-		rlAssertGrep "\[TestProject\] distance: distance-NOTFOUND" $rlRun_LOG
+		rlAssertGrep "^\[TestProject\] version: ${fallback_version}\$" $rlRun_LOG
+		rlAssertGrep "^\[TestProject\] commit: commit-NOTFOUND\$" $rlRun_LOG
+		rlAssertGrep "^\[TestProject\] describe: describe-NOTFOUND\$" $rlRun_LOG
+		rlAssertGrep "^\[TestProject\] distance: distance-NOTFOUND\$" $rlRun_LOG
 		rlRun -s "cmake ${build_args}" 0 "CMake build"
 		rlRun -s "${build_dir}/version" 0 "Run ./version"
-		rlAssertGrep "version: ${fallback_version}" $rlRun_LOG
+		rlAssertGrep "^version: ${fallback_version}\$" $rlRun_LOG
 	rlPhaseEnd
 
 	rlPhaseStartCleanup
