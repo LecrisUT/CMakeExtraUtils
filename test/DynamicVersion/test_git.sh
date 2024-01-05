@@ -35,11 +35,14 @@ rlJournalStart
 		rlRun "git tag v\${tag_version}" 0 "Tag release"
 		# Save the git metadata
 		rlRun "commit=\$(git rev-parse HEAD)" 0 "Get git commit"
+		rlRun "short_hash=\$(git rev-parse --short=8 HEAD)" 0 "Get git short-hash"
 		rlRun "describe=\$(git describe --tags --long)" 0 "Get git describe"
 		rlRun "distance=\$(echo \${describe} | sed 's/.*-(/d)+-.*/\1/')" 0 "Extract git distance"
 		rlRun -s "cmake ${configure_args}" 0 "CMake configure"
 		rlAssertGrep "^\[TestProject\] version: ${tag_version}\$" $rlRun_LOG
+		rlAssertGrep "^\[TestProject\] version-full: ${tag_version}\$" $rlRun_LOG
 		rlAssertGrep "^\[TestProject\] commit: ${commit}\$" $rlRun_LOG
+		rlAssertGrep "^\[TestProject\] short-hash: ${short_hash}\$" $rlRun_LOG
 		rlAssertGrep "^\[TestProject\] describe: ${describe}\$" $rlRun_LOG
 		rlAssertGrep "^\[TestProject\] distance: ${distance}\$" $rlRun_LOG
 	rlPhaseEnd
@@ -48,9 +51,12 @@ rlJournalStart
 		rlRun -s "cmake ${build_args}" 0 "CMake build"
 		rlRun -s "${build_dir}/version" 0 "Run ./version"
 		rlAssertGrep "^version: ${tag_version}\$" $rlRun_LOG
+		rlAssertGrep "^version-full: ${tag_version}\$" $rlRun_LOG
 		rlRun -s "${build_dir}/commit" 0 "Run ./commit"
 		rlAssertGrep "^version: ${tag_version}\$" $rlRun_LOG
+		rlAssertGrep "^version-full: ${tag_version}\$" $rlRun_LOG
 		rlAssertGrep "^commit: ${commit}\$" $rlRun_LOG
+		rlAssertGrep "^short-hash: ${short_hash}\$" $rlRun_LOG
 		rlAssertGrep "^describe: ${describe}\$" $rlRun_LOG
 		rlAssertGrep "^distance: ${distance}\$" $rlRun_LOG
 	rlPhaseEnd
@@ -63,9 +69,12 @@ rlJournalStart
 		rlAssertNotGrep "Re-running CMake" $rlRun_LOG
 		rlRun -s "${build_dir}/version" 0 "Run ./version"
 		rlAssertGrep "^version: ${tag_version}\$" $rlRun_LOG
+		rlAssertGrep "^version-full: ${tag_version}\$" $rlRun_LOG
 		rlRun -s "${build_dir}/commit" 0 "Run ./commit"
 		rlAssertGrep "^version: ${tag_version}\$" $rlRun_LOG
+		rlAssertGrep "^version-full: ${tag_version}\$" $rlRun_LOG
 		rlAssertGrep "^commit: ${commit}\$" $rlRun_LOG
+		rlAssertGrep "^short-hash: ${short_hash}\$" $rlRun_LOG
 		rlAssertGrep "^describe: ${describe}\$" $rlRun_LOG
 		rlAssertGrep "^distance: ${distance}\$" $rlRun_LOG
 	rlPhaseEnd
@@ -75,8 +84,10 @@ rlJournalStart
 		rlRun "git add random_file" 0 "Git add the random file"
 		rlRun "git commit -m 'Moved commit'" 0 "Git commit (off-tag)"
 		rlRun "commit=\$(git rev-parse HEAD)" 0 "Get git commit"
+		rlRun "short_hash=\$(git rev-parse --short=8 HEAD)" 0 "Get git short-hash"
 		rlRun "describe=\$(git describe --tags --long)" 0 "Get git describe"
 		rlRun "distance=\$(echo \${describe} | sed 's/.*-(/d)+-.*/\1/')" 0 "Extract git distance"
+		rlRun "version_full='${tag_version}.dev${distance}+${short_hash}'" 0 "Construct version_full"
 		# Version did not change, it should not re-configure
 		rlRun -s "cmake ${build_args} -t version" 0 "CMake build (version) 1st"
 		rlAssertNotGrep "Re-running CMake" $rlRun_LOG
@@ -84,18 +95,23 @@ rlJournalStart
 		rlAssertNotGrep "Re-running CMake" $rlRun_LOG
 		rlRun -s "${build_dir}/version" 0 "Run ./version"
 		rlAssertGrep "^version: ${tag_version}\$" $rlRun_LOG
+		rlAssertGrep "^version-full: ${version_full}\$" $rlRun_LOG
 		# Commit changed, it should re-configure
 		rlRun -s "cmake ${build_args} -t commit" 0 "CMake build (commit) 1st"
 		rlAssertNotGrep "Re-running CMake" $rlRun_LOG
 		rlRun -s "cmake ${build_args} -t commit" 0 "CMake build (commit) 2nd"
 		rlAssertGrep "Re-running CMake" $rlRun_LOG
 		rlAssertGrep "^version: ${tag_version}\$" $rlRun_LOG
+		rlAssertGrep "^version-full: ${version_full}\$" $rlRun_LOG
 		rlAssertGrep "^commit: ${commit}\$" $rlRun_LOG
+		rlAssertGrep "^short-hash: ${short_hash}\$" $rlRun_LOG
 		rlAssertGrep "^describe: ${describe}\$" $rlRun_LOG
 		rlAssertGrep "^distance: ${distance}\$" $rlRun_LOG
 		rlRun -s "${build_dir}/commit" 0 "Run ./commit"
 		rlAssertGrep "^version: ${tag_version}\$" $rlRun_LOG
+		rlAssertGrep "^version-full: ${version_full}\$" $rlRun_LOG
 		rlAssertGrep "^commit: ${commit}\$" $rlRun_LOG
+		rlAssertGrep "^short-hash: ${short_hash}\$" $rlRun_LOG
 		rlAssertGrep "^describe: ${describe}\$" $rlRun_LOG
 		rlAssertGrep "^distance: ${distance}\$" $rlRun_LOG
 	rlPhaseEnd
@@ -118,7 +134,9 @@ rlJournalStart
 		rlRun -s "cmake ${build_args} -t version" 0 "CMake build (version) 2nd"
 		rlAssertGrep "Re-running CMake" $rlRun_LOG
 		rlAssertGrep "^version: ${tag_version}\$" $rlRun_LOG
+		rlAssertGrep "^version-full: ${tag_version}\$" $rlRun_LOG
 		rlAssertGrep "^commit: ${commit}\$" $rlRun_LOG
+		rlAssertGrep "^short-hash: ${short_hash}\$" $rlRun_LOG
 		rlAssertGrep "^describe: ${describe}\$" $rlRun_LOG
 		rlAssertGrep "^distance: ${distance}\$" $rlRun_LOG
 		rlRun -s "${build_dir}/version" 0 "Run ./version"
@@ -128,7 +146,9 @@ rlJournalStart
 		rlAssertNotGrep "Re-running CMake" $rlRun_LOG
 		rlRun -s "${build_dir}/commit" 0 "Run ./commit"
 		rlAssertGrep "^version: ${tag_version}\$" $rlRun_LOG
+		rlAssertGrep "^version-full: ${tag_version}\$" $rlRun_LOG
 		rlAssertGrep "^commit: ${commit}\$" $rlRun_LOG
+		rlAssertGrep "^short-hash: ${short_hash}\$" $rlRun_LOG
 		rlAssertGrep "^describe: ${describe}\$" $rlRun_LOG
 		rlAssertGrep "^distance: ${distance}\$" $rlRun_LOG
 	rlPhaseEnd

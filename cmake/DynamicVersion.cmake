@@ -39,9 +39,11 @@ function(dynamic_version)
 	Main interface
 	  dynamic_version(PROJECT_PREFIX <prefix>)
 	  dynamic_version(PROJECT_PREFIX <prefix>
-	  	[OUTPUT_VERSION <var>] [OUTPUT_DESCRIBE <var>] [OUTPUT_COMMIT <var>]
-	  	[OUTPUT_DISTANCE <var>] [OUTPUT_SHORT_HASH <var>] [PROJECT_SOURCE <path>]
-	  	[GIT_ARCHIVAL_FILE <file>])
+	  	[OUTPUT_VERSION <var>] [OUTPUT_VERSION_FULL <var>]
+	  	[OUTPUT_DESCRIBE <var>] [OUTPUT_COMMIT <var>]
+	  	[OUTPUT_DISTANCE <var>] [OUTPUT_SHORT_HASH <var>]
+	  	[PROJECT_SOURCE <path>] [GIT_ARCHIVAL_FILE <file>]
+	  )
 
 	Fallbacks
 	  dynamic_version(...
@@ -58,6 +60,9 @@ function(dynamic_version)
 
 	`OUTPUT_VERSION` [Default: PROJECT_VERSION]
 	  Variable where to save the calculated version
+
+	`OUTPUT_VERSION_FULL` [Default: PROJECT_VERSION_FULL]
+	  Variable where to save the full version in the format
 
 	`OUTPUT_DESCRIBE` [Default: GIT_DESCRIBE]
 	  Variable where to save the pure `git describe` output
@@ -136,6 +141,7 @@ function(dynamic_version)
 	set(ARGS_OneValue
 			PROJECT_PREFIX
 			OUTPUT_VERSION
+			OUTPUT_VERSION_FULL
 			OUTPUT_DESCRIBE
 			OUTPUT_COMMIT
 			OUTPUT_DISTANCE
@@ -157,6 +163,9 @@ function(dynamic_version)
 	# Set default values
 	if (NOT DEFINED ARGS_OUTPUT_VERSION)
 		set(ARGS_OUTPUT_VERSION PROJECT_VERSION)
+	endif ()
+	if (NOT DEFINED ARGS_OUTPUT_VERSION_FULL)
+		set(ARGS_OUTPUT_VERSION_FULL PROJECT_VERSION_FULL)
 	endif ()
 	if (NOT DEFINED ARGS_OUTPUT_DESCRIBE)
 		set(ARGS_OUTPUT_DESCRIBE GIT_DESCRIBE)
@@ -252,6 +261,11 @@ function(dynamic_version)
 	string(JSON ${ARGS_OUTPUT_COMMIT} ERROR_VARIABLE _ GET ${data} commit)
 	string(JSON ${ARGS_OUTPUT_DISTANCE} ERROR_VARIABLE _ GET ${data} distance)
 	string(JSON ${ARGS_OUTPUT_SHORT_HASH} ERROR_VARIABLE _ GET ${data} short-hash)
+	if (${ARGS_OUTPUT_DISTANCE} EQUAL 0)
+		set(${ARGS_OUTPUT_VERSION_FULL} ${${ARGS_OUTPUT_VERSION}})
+	else ()
+		set(${ARGS_OUTPUT_VERSION_FULL} "${${ARGS_OUTPUT_VERSION}}.dev${${ARGS_OUTPUT_DISTANCE}}+${${ARGS_OUTPUT_SHORT_HASH}}")
+	endif ()
 
 	# Configure targets
 	if (failed)
@@ -294,6 +308,7 @@ function(dynamic_version)
 		# TODO: Remove when cmake 3.25 is commonly distributed
 		set(${ARGS_OUTPUT_DESCRIBE} ${${ARGS_OUTPUT_DESCRIBE}} PARENT_SCOPE)
 		set(${ARGS_OUTPUT_VERSION} ${${ARGS_OUTPUT_VERSION}} PARENT_SCOPE)
+		set(${ARGS_OUTPUT_VERSION_FULL} ${${ARGS_OUTPUT_VERSION_FULL}} PARENT_SCOPE)
 		set(${ARGS_OUTPUT_COMMIT} ${${ARGS_OUTPUT_COMMIT}} PARENT_SCOPE)
 		set(${ARGS_OUTPUT_DISTANCE} ${${ARGS_OUTPUT_DISTANCE}} PARENT_SCOPE)
 		set(${ARGS_OUTPUT_SHORT_HASH} ${${ARGS_OUTPUT_SHORT_HASH}} PARENT_SCOPE)
@@ -301,6 +316,7 @@ function(dynamic_version)
 	return(PROPAGATE
 			${ARGS_OUTPUT_DESCRIBE}
 			${ARGS_OUTPUT_VERSION}
+			${ARGS_OUTPUT_VERSION_FULL}
 			${ARGS_OUTPUT_COMMIT}
 			${ARGS_OUTPUT_DISTANCE}
 			${ARGS_OUTPUT_SHORT_HASH}

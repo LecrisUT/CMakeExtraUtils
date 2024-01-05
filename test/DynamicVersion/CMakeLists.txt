@@ -16,7 +16,9 @@ project(TestProject
         LANGUAGES CXX)
 
 message("version: ${PROJECT_VERSION}")
+message("version-full: ${PROJECT_VERSION_FULL}")
 message("commit: ${GIT_COMMIT}")
+message("short-hash: ${GIT_SHORT_HASH}")
 message("describe: ${GIT_DESCRIBE}")
 message("distance: ${GIT_DISTANCE}")
 

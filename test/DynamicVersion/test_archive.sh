@@ -33,21 +33,27 @@ rlJournalStart
 	  rlRun "tag_version=0.0.0" 0 "Set tag_version"
 		rlRun "git tag v\${tag_version}" 0 "Tag git commit"
 		rlRun "commit=\$(git rev-parse HEAD)" 0 "Get git commit"
+		rlRun "short_hash=\$(git rev-parse --short=8 HEAD)" 0 "Get git short-hash"
 		rlRun "describe=\$(git describe --tags --long)" 0 "Get git describe"
 		rlRun "distance=\$(echo \${describe} | sed 's/.*-(/d)+-.*/\1/')" 0 "Extract git distance"
 	  rlRun "git archive HEAD --prefix=${archive_name}/ -o ${archive_name}.tar.gz" 0 "Git archive"
 	  rlRun "tar -xf ${archive_name}.tar.gz" 0 "Extract archive"
 		rlRun -s "cmake -S ${archive_name} ${configure_args}" 0 "CMake configure"
 		rlAssertGrep "^\[TestProject\] version: ${tag_version}\$" $rlRun_LOG
+		rlAssertGrep "^\[TestProject\] version-full: ${tag_version}\$" $rlRun_LOG
 		rlAssertGrep "^\[TestProject\] commit: ${commit}\$" $rlRun_LOG
+		rlAssertGrep "^\[TestProject\] short-hash: ${short_hash}\$" $rlRun_LOG
 		rlAssertGrep "^\[TestProject\] describe: ${describe}\$" $rlRun_LOG
 		rlAssertGrep "^\[TestProject\] distance: ${distance}\$" $rlRun_LOG
 		rlRun -s "cmake ${build_args}" 0 "CMake build"
 		rlRun -s "${build_dir}/version" 0 "Run ./version"
 		rlAssertGrep "^version: ${tag_version}\$" $rlRun_LOG
+		rlAssertGrep "^version-full: ${tag_version}\$" $rlRun_LOG
 		rlRun -s "${build_dir}/commit" 0 "Run ./commit"
 		rlAssertGrep "^version: ${tag_version}\$" $rlRun_LOG
+		rlAssertGrep "^version-full: ${tag_version}\$" $rlRun_LOG
 		rlAssertGrep "^commit: ${commit}\$" $rlRun_LOG
+		rlAssertGrep "^short-hash: ${short_hash}\$" $rlRun_LOG
 		rlAssertGrep "^describe: ${describe}\$" $rlRun_LOG
 		rlAssertGrep "^distance: ${distance}\$" $rlRun_LOG
 	rlPhaseEnd
@@ -59,21 +65,28 @@ rlJournalStart
 		rlRun "git add random_file" 0 "Git add the random file"
 		rlRun "git commit -m 'Moved commit'" 0 "Git commit (off-tag)"
 		rlRun "commit=\$(git rev-parse HEAD)" 0 "Get git commit"
+		rlRun "short_hash=\$(git rev-parse --short=8 HEAD)" 0 "Get git short-hash"
 		rlRun "describe=\$(git describe --tags --long)" 0 "Get git describe"
 		rlRun "distance=\$(echo \${describe} | sed 's/.*-(/d)+-.*/\1/')" 0 "Extract git distance"
+		rlRun "version_full='${tag_version}.dev${distance}+${short_hash}'" 0 "Construct version_full"
 	  rlRun "git archive HEAD --prefix=${archive_name}/ -o ${archive_name}.tar.gz" 0 "Git archive"
 	  rlRun "tar -xf ${archive_name}.tar.gz" 0 "Extract archive"
 		rlRun -s "cmake -S ${archive_name} ${configure_args}" 0 "CMake configure"
 		rlAssertGrep "^\[TestProject\] version: ${tag_version}\$" $rlRun_LOG
+		rlAssertGrep "^\[TestProject\] version-full: ${version_full}\$" $rlRun_LOG
 		rlAssertGrep "^\[TestProject\] commit: ${commit}\$" $rlRun_LOG
+		rlAssertGrep "^\[TestProject\] short-hash: ${short_hash}\$" $rlRun_LOG
 		rlAssertGrep "^\[TestProject\] describe: ${describe}\$" $rlRun_LOG
 		rlAssertGrep "^\[TestProject\] distance: ${distance}\$" $rlRun_LOG
 		rlRun -s "cmake ${build_args}" 0 "CMake build"
 		rlRun -s "${build_dir}/version" 0 "Run ./version"
 		rlAssertGrep "^version: ${tag_version}\$" $rlRun_LOG
+		rlAssertGrep "^version-full: ${version_full}\$" $rlRun_LOG
 		rlRun -s "${build_dir}/commit" 0 "Run ./commit"
 		rlAssertGrep "^version: ${tag_version}\$" $rlRun_LOG
+		rlAssertGrep "^version-full: ${version_full}\$" $rlRun_LOG
 		rlAssertGrep "^commit: ${commit}\$" $rlRun_LOG
+		rlAssertGrep "^short-hash: ${short_hash}\$" $rlRun_LOG
 		rlAssertGrep "^describe: ${describe}\$" $rlRun_LOG
 		rlAssertGrep "^distance: ${distance}\$" $rlRun_LOG
 	rlPhaseEnd
