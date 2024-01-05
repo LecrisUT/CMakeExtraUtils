@@ -25,6 +25,7 @@ rlJournalStart
 		rlAssertGrep "\[TestProject\] version: ${fallback_version}" $rlRun_LOG
 		rlAssertGrep "\[TestProject\] commit: commit-NOTFOUND" $rlRun_LOG
 		rlAssertGrep "\[TestProject\] describe: describe-NOTFOUND" $rlRun_LOG
+		rlAssertGrep "\[TestProject\] distance: distance-NOTFOUND" $rlRun_LOG
 		rlRun -s "cmake ${build_args}" 0 "CMake build"
 		rlRun -s "${build_dir}/version" 0 "Run ./version"
 		rlAssertGrep "version: ${fallback_version}" $rlRun_LOG

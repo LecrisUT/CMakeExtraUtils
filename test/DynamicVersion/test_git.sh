@@ -35,11 +35,13 @@ rlJournalStart
 		rlRun "git tag v\${tag_version}" 0 "Tag release"
 		# Save the git metadata
 		rlRun "commit=\$(git rev-parse HEAD)" 0 "Get git commit"
-		rlRun "describe=\$(git describe --tags)" 0 "Get git describe"
+		rlRun "describe=\$(git describe --tags --long)" 0 "Get git describe"
+		rlRun "distance=\$(echo \${describe} | sed 's/.*-(/d)+-.*/\1/')" 0 "Extract git distance"
 		rlRun -s "cmake ${configure_args}" 0 "CMake configure"
 		rlAssertGrep "\[TestProject\] version: ${tag_version}" $rlRun_LOG
 		rlAssertGrep "\[TestProject\] commit: ${commit}" $rlRun_LOG
 		rlAssertGrep "\[TestProject\] describe: ${describe}" $rlRun_LOG
+		rlAssertGrep "\[TestProject\] distance: ${distance}" $rlRun_LOG
 	rlPhaseEnd
 
 	rlPhaseStartTest "Tagged: Build"
@@ -50,6 +52,7 @@ rlJournalStart
 		rlAssertGrep "version: ${tag_version}" $rlRun_LOG
 		rlAssertGrep "commit: ${commit}" $rlRun_LOG
 		rlAssertGrep "describe: ${describe}" $rlRun_LOG
+		rlAssertGrep "distance: ${distance}" $rlRun_LOG
 	rlPhaseEnd
 
 	rlPhaseStartTest "Tagged: Build (Repeat)"
@@ -64,6 +67,7 @@ rlJournalStart
 		rlAssertGrep "version: ${tag_version}" $rlRun_LOG
 		rlAssertGrep "commit: ${commit}" $rlRun_LOG
 		rlAssertGrep "describe: ${describe}" $rlRun_LOG
+		rlAssertGrep "distance: ${distance}" $rlRun_LOG
 	rlPhaseEnd
 
 	rlPhaseStartTest "Off-tag: Build"
@@ -71,7 +75,8 @@ rlJournalStart
 		rlRun "git add random_file" 0 "Git add the random file"
 		rlRun "git commit -m 'Moved commit'" 0 "Git commit (off-tag)"
 		rlRun "commit=\$(git rev-parse HEAD)" 0 "Get git commit"
-		rlRun "describe=\$(git describe --tags)" 0 "Get git describe"
+		rlRun "describe=\$(git describe --tags --long)" 0 "Get git describe"
+		rlRun "distance=\$(echo \${describe} | sed 's/.*-(/d)+-.*/\1/')" 0 "Extract git distance"
 		# Version did not change, it should not re-configure
 		rlRun -s "cmake ${build_args} -t version" 0 "CMake build (version) 1st"
 		rlAssertNotGrep "Re-running CMake" $rlRun_LOG
@@ -87,16 +92,19 @@ rlJournalStart
 		rlAssertGrep "version: ${tag_version}" $rlRun_LOG
 		rlAssertGrep "commit: ${commit}" $rlRun_LOG
 		rlAssertGrep "describe: ${describe}" $rlRun_LOG
+		rlAssertGrep "distance: ${distance}" $rlRun_LOG
 		rlRun -s "${build_dir}/commit" 0 "Run ./commit"
 		rlAssertGrep "version: ${tag_version}" $rlRun_LOG
 		rlAssertGrep "commit: ${commit}" $rlRun_LOG
 		rlAssertGrep "describe: ${describe}" $rlRun_LOG
+		rlAssertGrep "distance: ${distance}" $rlRun_LOG
 	rlPhaseEnd
 
 	rlPhaseStartTest "New tag: Build"
 	  rlRun "tag_version='0.1.0'" 0 "Set tag_version"
 		rlRun "git tag v\${tag_version}" 0 "Tag commit"
-		rlRun "describe=\$(git describe --tags)" 0 "Get git describe"
+		rlRun "describe=\$(git describe --tags --long)" 0 "Get git describe"
+		rlRun "distance=\$(echo \${describe} | sed 's/.*-(/d)+-.*/\1/')" 0 "Extract git distance"
 		# Commit did not change, it should not re-configure
 		rlRun -s "cmake ${build_args} -t commit" 0 "CMake build (commit) 1st"
 		rlAssertNotGrep "Re-running CMake" $rlRun_LOG
@@ -112,6 +120,7 @@ rlJournalStart
 		rlAssertGrep "version: ${tag_version}" $rlRun_LOG
 		rlAssertGrep "commit: ${commit}" $rlRun_LOG
 		rlAssertGrep "describe: ${describe}" $rlRun_LOG
+		rlAssertGrep "distance: ${distance}" $rlRun_LOG
 		rlRun -s "${build_dir}/version" 0 "Run ./version"
 		rlAssertGrep "version: ${tag_version}" $rlRun_LOG
 		# Check the version and describe again for completeness
@@ -121,6 +130,7 @@ rlJournalStart
 		rlAssertGrep "version: ${tag_version}" $rlRun_LOG
 		rlAssertGrep "commit: ${commit}" $rlRun_LOG
 		rlAssertGrep "describe: ${describe}" $rlRun_LOG
+		rlAssertGrep "distance: ${distance}" $rlRun_LOG
 	rlPhaseEnd
 
 

@@ -7,5 +7,6 @@ int main(){
     std::cout << "version: " << version << std::endl;
     std::cout << "commit: " << commit << std::endl;
     std::cout << "describe: " << describe << std::endl;
+    std::cout << "distance: " << distance << std::endl;
     return 0;
 }

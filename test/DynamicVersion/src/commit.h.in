@@ -4,3 +4,4 @@
 
 const std::string commit = "@GIT_COMMIT@";
 const std::string describe = "@GIT_DESCRIBE@";
+const int distance = @GIT_DISTANCE@;

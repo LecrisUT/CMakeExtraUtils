@@ -33,13 +33,15 @@ rlJournalStart
 	  rlRun "tag_version=0.0.0" 0 "Set tag_version"
 		rlRun "git tag v\${tag_version}" 0 "Tag git commit"
 		rlRun "commit=\$(git rev-parse HEAD)" 0 "Get git commit"
-		rlRun "describe=\$(git describe --tags)" 0 "Get git describe"
+		rlRun "describe=\$(git describe --tags --long)" 0 "Get git describe"
+		rlRun "distance=\$(echo \${describe} | sed 's/.*-(/d)+-.*/\1/')" 0 "Extract git distance"
 	  rlRun "git archive HEAD --prefix=${archive_name}/ -o ${archive_name}.tar.gz" 0 "Git archive"
 	  rlRun "tar -xf ${archive_name}.tar.gz" 0 "Extract archive"
 		rlRun -s "cmake -S ${archive_name} ${configure_args}" 0 "CMake configure"
 		rlAssertGrep "\[TestProject\] version: ${tag_version}" $rlRun_LOG
 		rlAssertGrep "\[TestProject\] commit: ${commit}" $rlRun_LOG
 		rlAssertGrep "\[TestProject\] describe: ${describe}" $rlRun_LOG
+		rlAssertGrep "\[TestProject\] distance: ${distance}" $rlRun_LOG
 		rlRun -s "cmake ${build_args}" 0 "CMake build"
 		rlRun -s "${build_dir}/version" 0 "Run ./version"
 		rlAssertGrep "version: ${tag_version}" $rlRun_LOG
@@ -47,6 +49,7 @@ rlJournalStart
 		rlAssertGrep "version: ${tag_version}" $rlRun_LOG
 		rlAssertGrep "commit: ${commit}" $rlRun_LOG
 		rlAssertGrep "describe: ${describe}" $rlRun_LOG
+		rlAssertGrep "distance: ${distance}" $rlRun_LOG
 	rlPhaseEnd
 
 	rlPhaseStartTest "Off-tag archive"
@@ -56,13 +59,15 @@ rlJournalStart
 		rlRun "git add random_file" 0 "Git add the random file"
 		rlRun "git commit -m 'Moved commit'" 0 "Git commit (off-tag)"
 		rlRun "commit=\$(git rev-parse HEAD)" 0 "Get git commit"
-		rlRun "describe=\$(git describe --tags)" 0 "Get git describe"
+		rlRun "describe=\$(git describe --tags --long)" 0 "Get git describe"
+		rlRun "distance=\$(echo \${describe} | sed 's/.*-(/d)+-.*/\1/')" 0 "Extract git distance"
 	  rlRun "git archive HEAD --prefix=${archive_name}/ -o ${archive_name}.tar.gz" 0 "Git archive"
 	  rlRun "tar -xf ${archive_name}.tar.gz" 0 "Extract archive"
 		rlRun -s "cmake -S ${archive_name} ${configure_args}" 0 "CMake configure"
 		rlAssertGrep "\[TestProject\] version: ${tag_version}" $rlRun_LOG
 		rlAssertGrep "\[TestProject\] commit: ${commit}" $rlRun_LOG
 		rlAssertGrep "\[TestProject\] describe: ${describe}" $rlRun_LOG
+		rlAssertGrep "\[TestProject\] distance: ${distance}" $rlRun_LOG
 		rlRun -s "cmake ${build_args}" 0 "CMake build"
 		rlRun -s "${build_dir}/version" 0 "Run ./version"
 		rlAssertGrep "version: ${tag_version}" $rlRun_LOG
@@ -70,6 +75,7 @@ rlJournalStart
 		rlAssertGrep "version: ${tag_version}" $rlRun_LOG
 		rlAssertGrep "commit: ${commit}" $rlRun_LOG
 		rlAssertGrep "describe: ${describe}" $rlRun_LOG
+		rlAssertGrep "distance: ${distance}" $rlRun_LOG
 	rlPhaseEnd
 
 	rlPhaseStartCleanup

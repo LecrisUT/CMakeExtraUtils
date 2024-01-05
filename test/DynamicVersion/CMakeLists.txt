@@ -18,6 +18,7 @@ project(TestProject
 message("version: ${PROJECT_VERSION}")
 message("commit: ${GIT_COMMIT}")
 message("describe: ${GIT_DESCRIBE}")
+message("distance: ${GIT_DISTANCE}")
 
 configure_file(src/version.h.in version.h)
 add_executable(version src/version.cpp)
