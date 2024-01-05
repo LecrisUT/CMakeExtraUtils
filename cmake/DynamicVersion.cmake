@@ -40,8 +40,8 @@ function(dynamic_version)
 	  dynamic_version(PROJECT_PREFIX <prefix>)
 	  dynamic_version(PROJECT_PREFIX <prefix>
 	  	[OUTPUT_VERSION <var>] [OUTPUT_DESCRIBE <var>] [OUTPUT_COMMIT <var>]
-		[OUTPUT_DISTANCE <var>] [OUTPUT_SHORT_HASH <var>] [PROJECT_SOURCE <path>]
-        [GIT_ARCHIVAL_FILE <file>])
+	  	[OUTPUT_DISTANCE <var>] [OUTPUT_SHORT_HASH <var>] [PROJECT_SOURCE <path>]
+	  	[GIT_ARCHIVAL_FILE <file>])
 
 	Fallbacks
 	  dynamic_version(...
@@ -65,11 +65,11 @@ function(dynamic_version)
 	`OUTPUT_COMMIT` [Default: GIT_COMMIT]
 	  Variable where to save the current git commit hash
 
-    `OUTPUT_DISTANCE` [Default: GIT_DISTANCE]
-      Variable where to save the distance from git tag
+	`OUTPUT_DISTANCE` [Default: GIT_DISTANCE]
+	  Variable where to save the distance from git tag
 
-    `OUTPUT_SHORT_HASH` [Default: GIT_SHORT_HASH]
-      Variable where to save the shortened git commit hash
+	`OUTPUT_SHORT_HASH` [Default: GIT_SHORT_HASH]
+	  Variable where to save the shortened git commit hash
 
 	`PROJECT_SOURCE` [Default: `${CMAKE_CURRENT_SOURCE_DIR}`]
 	  Location of the project source. Has to be either an extracted git archive or a git clone
@@ -139,7 +139,7 @@ function(dynamic_version)
 			OUTPUT_DESCRIBE
 			OUTPUT_COMMIT
 			OUTPUT_DISTANCE
-            OUTPUT_SHORT_HASH
+			OUTPUT_SHORT_HASH
 			PROJECT_SOURCE
 			GIT_ARCHIVAL_FILE
 			FALLBACK_VERSION
@@ -166,7 +166,7 @@ function(dynamic_version)
 	endif ()
 	if (NOT DEFINED ARGS_OUTPUT_DISTANCE)
 		set(ARGS_OUTPUT_DISTANCE GIT_DISTANCE)
-    endif ()
+	endif ()
 	if (NOT DEFINED ARGS_OUTPUT_SHORT_HASH)
 		set(ARGS_OUTPUT_SHORT_HASH GIT_SHORT_HASH)
 	endif ()
