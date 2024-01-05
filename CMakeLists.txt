@@ -15,7 +15,9 @@ list(APPEND CMAKE_MESSAGE_CONTEXT CMakeExtraUtils)
 # dogfooding `DynamicVersion` module in order to set the CMakeExtraUtils version
 list(PREPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake)
 include(DynamicVersion)
-dynamic_version(PROJECT_PREFIX CMakeExtraUtils_)
+dynamic_version(PROJECT_PREFIX CMakeExtraUtils_
+		FALLBACK_VERSION 0.0.0
+)
 
 project(CMakeExtraUtils
 		VERSION ${PROJECT_VERSION}
