@@ -120,9 +120,6 @@ function(dynamic_version)
 	`${OUTPUT_FOLDER}/.git_commit`
 	  Current commit
 
-	`${OUTPUT_FOLDER}/.git_distance`
-	  Current git distance from tag
-
 	## See also
 	- [pypa/setuptools_scm](https://github.com/pypa/setuptools_scm)
 
@@ -229,7 +226,7 @@ function(dynamic_version)
 			COMMAND_ERROR_IS_FATAL ANY)
 
 	# Copy all configured files
-	foreach (file IN ITEMS .DynamicVersion.json .version .git_describe .git_commit .git_distance)
+	foreach (file IN ITEMS .DynamicVersion.json .version .git_describe .git_commit)
 		if (EXISTS ${ARGS_TMP_FOLDER}/${file})
 			if (CMAKE_VERSION VERSION_GREATER_EQUAL 3.21)
 				file(COPY_FILE ${ARGS_TMP_FOLDER}/${file} ${ARGS_OUTPUT_FOLDER}/${file})
@@ -442,13 +439,13 @@ function(get_dynamic_version)
 				OUTPUT_STRIP_TRAILING_WHITESPACE
 				COMMAND_ERROR_IS_FATAL ANY)
 		# Get version and describe-name
-		execute_process(COMMAND ${GIT_EXECUTABLE} describe --tags --match=?[0-9.]*
+		execute_process(COMMAND ${GIT_EXECUTABLE} describe --tags --long --abbrev=8 --match=?[0-9.]*
 				WORKING_DIRECTORY ${ARGS_PROJECT_SOURCE}
 				OUTPUT_VARIABLE describe-name
 				OUTPUT_STRIP_TRAILING_WHITESPACE
 				COMMAND_ERROR_IS_FATAL ANY)
 		# Match any part containing digits and periods (strips out rc and so on)
-		if (NOT describe-name MATCHES "^([v]?([0-9\\.]+).*)")
+        if (NOT describe-name MATCHES "^([v]?([0-9\\.]+)-([0-9]+)-g(.*))")
 			message(${error_message_type}
 					"Version tag is ill-formatted\n"
 					"  Describe-name: ${describe-name}"
@@ -462,25 +459,12 @@ function(get_dynamic_version)
 				${data} version \"${CMAKE_MATCH_2}\")
 		file(WRITE ${ARGS_TMP_FOLDER}/.version ${CMAKE_MATCH_2})
 		string(JSON data SET
+				${data} distance \"${CMAKE_MATCH_3}\")
+		string(JSON data SET
+				${data} short_sha \"${CMAKE_MATCH_4}\")
+		string(JSON data SET
 				${data} commit \"${git-hash}\")
 		file(WRITE ${ARGS_TMP_FOLDER}/.git_commit ${git-hash})
-        # Get full describe with distance
-        execute_process(COMMAND ${GIT_EXECUTABLE} describe --tags --long --match=?[0-9.]*
-                WORKING_DIRECTORY ${ARGS_PROJECT_SOURCE}
-                OUTPUT_VARIABLE describe-name-long
-                OUTPUT_STRIP_TRAILING_WHITESPACE
-                COMMAND_ERROR_IS_FATAL ANY)
-        # Match version (as above) and distance
-        if (NOT describe-name-long MATCHES "^([v]?([0-9\\.]+)-([0-9]+)-.*)")
-            message(${error_message_type}
-                    "Version tag is ill-formatted\n"
-                    "  Describe-name-long: ${describe-name-long}"
-            )
-            return()
-        endif ()
-        string(JSON data SET
-                ${data} distance \"${CMAKE_MATCH_3}\")
-        file(WRITE ${ARGS_TMP_FOLDER}/.git_distance ${CMAKE_MATCH_3})
 		message(DEBUG
 				"Found appropriate tag from git"
 		)
