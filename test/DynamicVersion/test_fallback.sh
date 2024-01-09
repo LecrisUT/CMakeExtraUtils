@@ -19,7 +19,8 @@ rlJournalStart
 		rlAssertGrep "Project source is neither a git repository nor a git archive" $rlRun_LOG
 	rlPhaseEnd
 
-	rlPhaseStartTest "With fallback"
+	rlPhaseStartTest "With fallback version"
+    [[ -d ${build_dir} ]] && rlRun "rm -rf ${build_dir}" 0 "Clean the build directory"
 	  rlRun "fallback_version='0.1.2'" 0 "Set fallback_version"
 		rlRun -s "cmake ${configure_args} -DFALLBACK_VERSION=${fallback_version}" 0 "CMake configure"
 		rlAssertGrep "^\[TestProject\] version: ${fallback_version}\$" $rlRun_LOG
@@ -32,6 +33,36 @@ rlJournalStart
 		rlRun -s "${build_dir}/version" 0 "Run ./version"
 		rlAssertGrep "^version: ${fallback_version}\$" $rlRun_LOG
 		rlAssertGrep "^version-full: ${fallback_version}\$" $rlRun_LOG
+    rlRun -s "${build_dir}/commit" 0 "Run ./commit"
+    rlAssertGrep "^version: ${fallback_version}\$" $rlRun_LOG
+    rlAssertGrep "^version-full: ${fallback_version}\$" $rlRun_LOG
+    rlAssertGrep "^commit: commit-NOTFOUND\$" $rlRun_LOG
+    rlAssertGrep "^short-hash: short-hash-NOTFOUND\$" $rlRun_LOG
+    rlAssertGrep "^describe: describe-NOTFOUND\$" $rlRun_LOG
+    rlAssertGrep "^distance: distance-NOTFOUND\$" $rlRun_LOG
+	rlPhaseEnd
+
+	rlPhaseStartTest "With fallback version + commit"
+    [[ -d ${build_dir} ]] && rlRun "rm -rf ${build_dir}" 0 "Clean the build directory"
+	  rlRun "fallback_commit='dummy'" 0 "Set fallback_commit"
+		rlRun -s "cmake ${configure_args} -DFALLBACK_VERSION=${fallback_version} -DFALLBACK_HASH=${fallback_commit}" 0 "CMake configure"
+		rlAssertGrep "^\[TestProject\] version: ${fallback_version}\$" $rlRun_LOG
+		rlAssertGrep "^\[TestProject\] version-full: ${fallback_version}\$" $rlRun_LOG
+		rlAssertGrep "^\[TestProject\] commit: ${fallback_commit}\$" $rlRun_LOG
+		rlAssertGrep "^\[TestProject\] short-hash: short-hash-NOTFOUND\$" $rlRun_LOG
+		rlAssertGrep "^\[TestProject\] describe: describe-NOTFOUND\$" $rlRun_LOG
+		rlAssertGrep "^\[TestProject\] distance: distance-NOTFOUND\$" $rlRun_LOG
+		rlRun -s "cmake ${build_args}" 0 "CMake build"
+		rlRun -s "${build_dir}/version" 0 "Run ./version"
+		rlAssertGrep "^version: ${fallback_version}\$" $rlRun_LOG
+		rlAssertGrep "^version-full: ${fallback_version}\$" $rlRun_LOG
+    rlRun -s "${build_dir}/commit" 0 "Run ./commit"
+    rlAssertGrep "^version: ${fallback_version}\$" $rlRun_LOG
+    rlAssertGrep "^version-full: ${fallback_version}\$" $rlRun_LOG
+    rlAssertGrep "^commit: ${fallback_commit}\$" $rlRun_LOG
+    rlAssertGrep "^short-hash: short-hash-NOTFOUND\$" $rlRun_LOG
+    rlAssertGrep "^describe: describe-NOTFOUND\$" $rlRun_LOG
+    rlAssertGrep "^distance: distance-NOTFOUND\$" $rlRun_LOG
 	rlPhaseEnd
 
 	rlPhaseStartCleanup

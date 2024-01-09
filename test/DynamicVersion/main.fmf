@@ -2,6 +2,7 @@ tag: [ DynamicVersion ]
 require+:
   - gcc-c++
   - ninja-build
+  - python3-setuptools_scm
 
 # Define tests
 /git_repo:
