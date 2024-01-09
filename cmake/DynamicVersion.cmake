@@ -40,7 +40,8 @@ function(dynamic_version)
 	  dynamic_version(PROJECT_PREFIX <prefix>)
 	  dynamic_version(PROJECT_PREFIX <prefix>
 	  	[OUTPUT_VERSION <var>] [OUTPUT_DESCRIBE <var>] [OUTPUT_COMMIT <var>]
-		[OUTPUT_DISTANCE <var>] [PROJECT_SOURCE <path>] [GIT_ARCHIVAL_FILE <file>])
+		[OUTPUT_DISTANCE <var>] [OUTPUT_SHORT_HASH <var>] [PROJECT_SOURCE <path>]
+        [GIT_ARCHIVAL_FILE <file>])
 
 	Fallbacks
 	  dynamic_version(...
@@ -66,6 +67,9 @@ function(dynamic_version)
 
     `OUTPUT_DISTANCE` [Default: GIT_DISTANCE]
       Variable where to save the distance from git tag
+
+    `OUTPUT_SHORT_HASH` [Default: GIT_SHORT_HASH]
+      Variable where to save the shortened git commit hash
 
 	`PROJECT_SOURCE` [Default: `${CMAKE_CURRENT_SOURCE_DIR}`]
 	  Location of the project source. Has to be either an extracted git archive or a git clone
@@ -135,6 +139,7 @@ function(dynamic_version)
 			OUTPUT_DESCRIBE
 			OUTPUT_COMMIT
 			OUTPUT_DISTANCE
+            OUTPUT_SHORT_HASH
 			PROJECT_SOURCE
 			GIT_ARCHIVAL_FILE
 			FALLBACK_VERSION
@@ -161,6 +166,9 @@ function(dynamic_version)
 	endif ()
 	if (NOT DEFINED ARGS_OUTPUT_DISTANCE)
 		set(ARGS_OUTPUT_DISTANCE GIT_DISTANCE)
+    endif ()
+	if (NOT DEFINED ARGS_OUTPUT_SHORT_HASH)
+		set(ARGS_OUTPUT_SHORT_HASH GIT_SHORT_HASH)
 	endif ()
 	if (NOT DEFINED ARGS_PROJECT_SOURCE)
 		set(ARGS_PROJECT_SOURCE ${CMAKE_CURRENT_SOURCE_DIR})
@@ -243,6 +251,7 @@ function(dynamic_version)
 	string(JSON ${ARGS_OUTPUT_DESCRIBE} ERROR_VARIABLE _ GET ${data} describe)
 	string(JSON ${ARGS_OUTPUT_COMMIT} ERROR_VARIABLE _ GET ${data} commit)
 	string(JSON ${ARGS_OUTPUT_DISTANCE} ERROR_VARIABLE _ GET ${data} distance)
+	string(JSON ${ARGS_OUTPUT_SHORT_HASH} ERROR_VARIABLE _ GET ${data} short-hash)
 
 	# Configure targets
 	if (failed)
@@ -287,12 +296,14 @@ function(dynamic_version)
 		set(${ARGS_OUTPUT_VERSION} ${${ARGS_OUTPUT_VERSION}} PARENT_SCOPE)
 		set(${ARGS_OUTPUT_COMMIT} ${${ARGS_OUTPUT_COMMIT}} PARENT_SCOPE)
 		set(${ARGS_OUTPUT_DISTANCE} ${${ARGS_OUTPUT_DISTANCE}} PARENT_SCOPE)
+		set(${ARGS_OUTPUT_SHORT_HASH} ${${ARGS_OUTPUT_SHORT_HASH}} PARENT_SCOPE)
 	endif ()
 	return(PROPAGATE
 			${ARGS_OUTPUT_DESCRIBE}
 			${ARGS_OUTPUT_VERSION}
 			${ARGS_OUTPUT_COMMIT}
 			${ARGS_OUTPUT_DISTANCE}
+			${ARGS_OUTPUT_SHORT_HASH}
 	)
 endfunction()
 
@@ -439,7 +450,7 @@ function(get_dynamic_version)
 				OUTPUT_STRIP_TRAILING_WHITESPACE
 				COMMAND_ERROR_IS_FATAL ANY)
 		# Get version and describe-name
-		execute_process(COMMAND ${GIT_EXECUTABLE} describe --tags --long --abbrev=8 --match=?[0-9.]*
+		execute_process(COMMAND ${GIT_EXECUTABLE} describe --tags --long --match=?[0-9.]*
 				WORKING_DIRECTORY ${ARGS_PROJECT_SOURCE}
 				OUTPUT_VARIABLE describe-name
 				OUTPUT_STRIP_TRAILING_WHITESPACE
@@ -461,7 +472,7 @@ function(get_dynamic_version)
 		string(JSON data SET
 				${data} distance \"${CMAKE_MATCH_3}\")
 		string(JSON data SET
-				${data} short_sha \"${CMAKE_MATCH_4}\")
+				${data} short-hash \"${CMAKE_MATCH_4}\")
 		string(JSON data SET
 				${data} commit \"${git-hash}\")
 		file(WRITE ${ARGS_TMP_FOLDER}/.git_commit ${git-hash})
