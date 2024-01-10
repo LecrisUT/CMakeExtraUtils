@@ -11,6 +11,7 @@ rlJournalStart
     [[ -n "$CMakeExtraUtils_ROOT" ]] && rlRun "base_configure_args=\"\${base_configure_args} -DCMakeExtraUtils_ROOT=\${CMakeExtraUtils_ROOT}\"" 0 "Add CMakeExtraUtils_ROOT"
     rlRun "echo '.git_archival.txt  export-subst' > .gitattributes" 0 "Configure .gitattributes"
 		rlRun "set -o pipefail"
+		rlIsCentOS && rlRun "export PYTHONWARNINGS=\"ignore::RuntimeWarning\" && hatch_args=\"2>&1\" && hatch version || true" 0 "Workaround for hatch/setuptools_scm issue"
 	rlPhaseEnd
 
 	for mode in DEV POST; do
@@ -41,7 +42,7 @@ rlJournalStart
       rlRun "rm -rf ${build_dir} dist testproject-*" 0 "Clean the build, dist, extracted directory"
       rlRun "tag_version=0.0.0" 0 "Set tag_version"
       rlRun "git tag v\${tag_version}" 0 "Tag git commit"
-      rlRun "version_full=\$(hatch version) && echo \${version_full}" 0 "Get setuptools_scm version"
+      rlRun "version_full=\$(hatch version ${hatch_args:-""}) && echo \${version_full}" 0 "Get setuptools_scm version"
       rlRun "commit=\$(git rev-parse HEAD) && echo \${commit}" 0 "Get git commit"
       rlRun "short_hash=\$(git rev-parse --short HEAD) && echo \${short_hash}" 0 "Get git short-hash"
       rlRun "describe=\$(git describe --tags) && echo \${describe}" 0 "Get git describe"
@@ -76,7 +77,7 @@ rlJournalStart
       rlRun "touch ./random_file" 0 "Create a random file"
       rlRun "git add random_file" 0 "Git add the random file"
       rlRun "git commit -m 'Moved commit'" 0 "Git commit (off-tag)"
-      rlRun "version_full=\$(hatch version) && echo \${version_full}" 0 "Get setuptools_scm version"
+      rlRun "version_full=\$(hatch version ${hatch_args:-""}) && echo \${version_full}" 0 "Get setuptools_scm version"
       rlRun "version=\$(echo \${version_full} | sed -E 's/([0-9\.]*)\.[a-z].*/\1/') && echo \${version}" 0 "Strip version"
       rlRun "commit=\$(git rev-parse HEAD) && echo \${commit}" 0 "Get git commit"
       rlRun "short_hash=\$(git rev-parse --short HEAD) && echo \${short_hash}" 0 "Get git short-hash"

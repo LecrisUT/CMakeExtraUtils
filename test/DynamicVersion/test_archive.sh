@@ -11,6 +11,7 @@ rlJournalStart
     [[ -n "$CMakeExtraUtils_ROOT" ]] && rlRun "base_configure_args=\"\${base_configure_args} -DCMakeExtraUtils_ROOT=\${CMakeExtraUtils_ROOT}\"" 0 "Add CMakeExtraUtils_ROOT"
     rlRun "echo '.git_archival.txt  export-subst' > .gitattributes" 0 "Configure .gitattributes"
 		rlRun "set -o pipefail"
+		rlIsCentOS && rlRun "export PYTHONWARNINGS=\"ignore::RuntimeWarning\" && hatch_args=\"2>&1\"" 0 "Workaround for hatch/setuptools_scm issue"
 	rlPhaseEnd
 
 	for mode in DEV POST; do
@@ -58,7 +59,8 @@ rlJournalStart
       rlRun "distance=0 && echo \${distance}" 0 "Extract git distance"
       rlRun "git archive HEAD --prefix=${archive_name}/ -o ${archive_name}.tar.gz" 0 "Git archive"
       rlRun "tar -xf ${archive_name}.tar.gz" 0 "Extract archive"
-      rlRun "version_full=\$(cd ${archive_name} && hatch version) && echo \${version_full}" 0 "Get setuptools_scm version"
+		  rlIsCentOS && rlRun "echo \$(cd ${archive_name} && hatch version)" 0 "Setup hatch environment"
+      rlRun "version_full=\$(cd ${archive_name} && hatch version ${hatch_args:-""}) && echo \${version_full}" 0 "Get setuptools_scm version"
       rlRun -s "cmake -S ${archive_name} ${configure_args}" 0 "CMake configure"
       rlAssertGrep "^\[TestProject\] version: ${tag_version}\$" $rlRun_LOG
       rlAssertGrep "^\[TestProject\] version-full: ${version_full}\$" $rlRun_LOG
@@ -93,7 +95,8 @@ rlJournalStart
       rlRun "distance=\$(echo \${describe} | sed -E 's/.*-([0-9]+)-.*/\1/') && echo \${distance}" 0 "Extract git distance"
       rlRun "git archive HEAD --prefix=${archive_name}/ -o ${archive_name}.tar.gz" 0 "Git archive"
       rlRun "tar -xf ${archive_name}.tar.gz" 0 "Extract archive"
-      rlRun "version_full=\$(cd ${archive_name} && hatch version) && echo \${version_full}" 0 "Get setuptools_scm version"
+		  rlIsCentOS && rlRun "echo \$(cd ${archive_name} && hatch version)" 0 "Setup hatch environment"
+      rlRun "version_full=\$(cd ${archive_name} && hatch version ${hatch_args:-""}) && echo \${version_full}" 0 "Get setuptools_scm version"
       rlRun "version=\$(echo \${version_full} | sed -E 's/([0-9\.]*)\.[a-z].*/\1/') && echo \${version}" 0 "Strip version"
       rlRun -s "cmake -S ${archive_name} ${configure_args}" 0 "CMake configure"
       rlAssertGrep "^\[TestProject\] version: ${version}\$" $rlRun_LOG
