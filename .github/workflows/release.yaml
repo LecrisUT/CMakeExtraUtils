@@ -7,8 +7,13 @@ on:
       - "v[0-9]+.[0-9]+.[0-9]+"
       - "v[0-9]+.[0-9]+.[0-9]+-rc[0-9]+"
   workflow_dispatch:
+    inputs:
+      tag:
+        description: Tag to release
+        required: true
 
 jobs:
+  # TODO: tests and docs are not aligned when called from workflow_dispatch :/
   pre-commit:
     uses: ./.github/workflows/step_pre-commit.yaml
   tests:
@@ -30,6 +35,8 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag }}
       - uses: softprops/action-gh-release@v1
         with:
           name: CMakeExtraUtils ${{ github.ref_name }}
