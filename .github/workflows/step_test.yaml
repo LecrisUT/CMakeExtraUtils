@@ -27,12 +27,8 @@ jobs:
           git config --global --add safe.directory "*"
           git config --global user.email "bot@github.com"
           git config --global user.name "GitHub Actions Bot"
-      - uses: actions/setup-python@v5
-        with:
-          python-version: 3.x
-      # TODO: This will be migrated to standalone actions
-      - name: Setup tmt environment
-        run: dnf install -y tmt tmt+report-junit
+      - name: Setup tmt
+        uses: LecrisUT/tmt-actions/setup-tmt@v1
       - uses: lukka/get-cmake@latest
         with:
           cmakeVersion: ${{ matrix.cmake }}
@@ -44,14 +40,10 @@ jobs:
           echo "CMakeExtraUtils_ROOT=$(pwd)/build" >> $GITHUB_ENV
       # TODO: This will be migrated to standalone actions
       - name: Run tmt tests
-        run: >
-          tmt --root ./test run --all provision -h local report -h junit --file report.xml
-      - name: Upload Test Results
-        if: always()
-        uses: actions/upload-artifact@v4
+        uses: LecrisUT/tmt-actions/run-tmt@v1
         with:
-          name: JUnit-CMake-${{ matrix.cmake }}
-          path: report.xml
+          root: test
+          report-artifact: JUnit-CMake-${{ matrix.cmake }}
   report:
     name: Report JUnit
     needs: [ tests ]
