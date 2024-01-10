@@ -65,8 +65,6 @@ jobs:
     targets:
       - fedora-all
       - epel-9
-    additional_repos:
-      - copr://@scikit-build/release
 ## TODO: Disabled until released on src.fedoraproject.org
 #  - job: propose_downstream
 #    trigger: release
