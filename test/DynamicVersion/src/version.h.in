@@ -3,3 +3,4 @@
 #include <string>
 
 const std::string version = "@PROJECT_VERSION@";
+const std::string version_full = "@PROJECT_VERSION_FULL@";

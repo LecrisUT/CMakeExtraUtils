@@ -45,5 +45,5 @@ project(MyProject
 - [x] Add simple pre-commit and `pyproject.toml` environment
 - [x] Fix `DynamicVersion` to work with buildable projects
 - [ ] Test coverage:
-  - [ ] `DynamicVersion`
+  - [x] `DynamicVersion`
   - [ ] `PackageComps`

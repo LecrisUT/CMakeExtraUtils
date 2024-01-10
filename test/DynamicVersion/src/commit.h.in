@@ -3,4 +3,7 @@
 #include <string>
 
 const std::string commit = "@GIT_COMMIT@";
+const std::string short_hash = "@GIT_SHORT_HASH@";
 const std::string describe = "@GIT_DESCRIBE@";
+// Usually should be int, but here will use string to compile with distance == NOT-FOUND
+const std::string distance = "@GIT_DISTANCE@";

@@ -2,6 +2,7 @@ tag: [ DynamicVersion ]
 require+:
   - gcc-c++
   - ninja-build
+  - hatch
 
 # Define tests
 /git_repo:
@@ -12,6 +13,11 @@ require+:
 /archive:
   summary: Test DynamicVersion as a git archive
   test: ./test_archive.sh
+/sdist:
+  summary: Test DynamicVersion as a python sdist
+  test: ./test_sdist.sh
+  require+:
+    - python3-build
 /fallback:
   summary: Test DynamicVersion fallbacks
   test: ./test_fallback.sh
