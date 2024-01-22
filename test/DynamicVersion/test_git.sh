@@ -13,6 +13,7 @@ rlJournalStart
     rlRun "configure_args=\"-B \${build_dir} \${base_configure_args}\" && echo \${configure_args}" 0 "Set temporary configure_args"
     rlRun "echo '.git_archival.txt  export-subst' > .gitattributes" 0 "Configure .gitattributes"
 		rlRun "set -o pipefail"
+		rlIsCentOS && rlRun "export PYTHONWARNINGS=\"ignore::RuntimeWarning\" && hatch_args=\"2>&1\" && hatch version || true" 0 "Workaround for hatch/setuptools_scm issue"
 	rlPhaseEnd
 
   rlPhaseStartTest "Not a git repo not an archive: Should fail"
@@ -59,7 +60,7 @@ rlJournalStart
       rlRun "short_hash=\$(git rev-parse --short HEAD) && echo \${short_hash}" 0 "Get git short-hash"
       rlRun "describe=\$(git describe --tags --long) && echo \${describe}" 0 "Get git describe"
       rlRun "distance=\$(echo \${describe} | sed -E 's/.*-([0-9]+)-.*/\1/') && echo \${distance}" 0 "Extract git distance"
-      rlRun "version_full=\$(hatch version) && echo \${version_full}" 0 "Get setuptools_scm version"
+      rlRun "version_full=\$(hatch version ${hatch_args:-""}) && echo \${version_full}" 0 "Get setuptools_scm version"
       rlRun -s "cmake ${configure_args}" 0 "CMake configure"
       rlAssertGrep "^\[TestProject\] version: ${tag_version}\$" $rlRun_LOG
       rlAssertGrep "^\[TestProject\] version-full: ${version_full}\$" $rlRun_LOG
@@ -109,7 +110,7 @@ rlJournalStart
       rlRun "short_hash=\$(git rev-parse --short HEAD) && echo \${short_hash}" 0 "Get git short-hash"
       rlRun "describe=\$(git describe --tags --long) && echo \${describe}" 0 "Get git describe"
       rlRun "distance=\$(echo \${describe} | sed -E 's/.*-([0-9]+)-.*/\1/') && echo \${distance}" 0 "Extract git distance"
-      rlRun "version_full=\$(hatch version) && echo \${version_full}" 0 "Get setuptools_scm version"
+      rlRun "version_full=\$(hatch version ${hatch_args:-""}) && echo \${version_full}" 0 "Get setuptools_scm version"
       rlRun "version=\$(echo \${version_full} | sed -E 's/([0-9\.]*)\.[a-z].*/\1/') && echo \${version}" 0 "Strip version"
       # Check if it re-configured due to version change
       rlRun -s "cmake ${build_args} -t version" 0 "CMake build (version) 1st"
@@ -163,7 +164,7 @@ rlJournalStart
       rlRun "git tag v\${tag_version}" 0 "Tag commit"
       rlRun "describe=\$(git describe --tags --long) && echo \${describe}" 0 "Get git describe"
       rlRun "distance=\$(echo \${describe} | sed -E 's/.*-([0-9]+)-.*/\1/') && echo \${distance}" 0 "Extract git distance"
-      rlRun "version_full=\$(hatch version) && echo \${version_full}" 0 "Get setuptools_scm version"
+      rlRun "version_full=\$(hatch version ${hatch_args:-""}) && echo \${version_full}" 0 "Get setuptools_scm version"
       # Commit did not change, it should not re-configure
       rlRun -s "cmake ${build_args} -t commit" 0 "CMake build (commit) 1st"
       rlAssertNotGrep "Re-running CMake" $rlRun_LOG
