@@ -18,7 +18,7 @@ jobs:
       matrix:
         cmake: ["3.20", "latest", "latestrc"]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
       # Note: Proper solution is: https://github.com/actions/runner/issues/2033#issuecomment-1598547465
@@ -54,7 +54,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download test results
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
         with:
